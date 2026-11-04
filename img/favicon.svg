@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="186 3 100 100" width="1000" height="1000">
+  <defs>
+    <mask id="boven" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="200"><rect width="400" height="200" fill="#fff"/><circle cx="224" cy="53" r="19" fill="none" stroke="#000" stroke-width="15"/><rect y="53" width="400" height="147" fill="#fff"/></mask>
+    <mask id="onder" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="200"><rect width="400" height="200" fill="#fff"/><circle cx="248" cy="53" r="19" fill="none" stroke="#000" stroke-width="15"/><rect width="400" height="53" fill="#fff"/></mask>
+  </defs>
+  <circle cx="224" cy="53" r="19" fill="none" stroke="#5E1424" stroke-width="9" mask="url(#onder)"/>
+  <circle cx="248" cy="53" r="19" fill="none" stroke="#5E1424" stroke-width="9" mask="url(#boven)"/>
+</svg>
