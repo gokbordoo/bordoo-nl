@@ -1,0 +1,4 @@
+# Netlify: de website staat in de map "site" en hoeft niet gebouwd te worden
+[build]
+  publish = "site"
+  command = ""
