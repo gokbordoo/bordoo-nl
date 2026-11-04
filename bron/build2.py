@@ -8,7 +8,7 @@ from config_garments import VAN_PRODUCT
 
 OUT = pathlib.Path(sys.argv[1])
 TODO = lambda t: f'<span class="invullen">{t}</span>'
-TEL, MAIL, KVK, PLAATS = TODO("06 – nog invullen"), "info@bordoo.nl", TODO("KvK-nummer"), TODO("plaats")
+TEL, MAIL = '<a href="tel:+31648399904">+31 6 48 39 99 04</a>', "info@bordoo.nl"
 
 # key: (naam, tekening, beschrijving, technieken)  B = borduren, D = bedrukken
 P = {
@@ -156,12 +156,11 @@ def page(fn, title, desc, body, branche=None):
           <li><a href="offerte.html">Offerte aanvragen</a></li>
           <li><a href="mailto:{MAIL}">{MAIL}</a></li>
           <li>{TEL}</li>
-          <li>{PLAATS}</li>
         </ul>
       </div>
     </div>
     <div class="footer__onder">
-      <span>© 2026 Bordoo · KvK {KVK}</span>
+      <span>© 2026 Bordoo</span>
       <span>bordoo.nl</span>
     </div>
   </div>
@@ -556,8 +555,7 @@ off = f"""<section class="hero hero--klein">
     <aside class="contactblok">
       <h2>Liever direct contact?</h2>
       <div class="contactregel"><span>E-mail</span><a href="mailto:{MAIL}">{MAIL}</a></div>
-      <div class="contactregel"><span>Telefoon / WhatsApp</span><strong>{TEL}</strong></div>
-      <div class="contactregel"><span>Locatie</span><strong>{PLAATS}</strong></div>
+      <div class="contactregel"><span>Telefoon / WhatsApp</span>{TEL}</div>
       <hr class="goudlijn">
       <p class="hint">Particulier? Ook voor één kledingstuk met een naam of tekst kunt u ons een bericht sturen.</p>
     </aside>
