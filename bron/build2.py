@@ -5,6 +5,7 @@ from garments import svg as kleding, G, TSHIRT, logo as oo, LIJN
 from samensteller import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
+from privacy import PRIVACY
 
 OUT = pathlib.Path(sys.argv[1])
 TODO = lambda t: f'<span class="invullen">{t}</span>'
@@ -154,6 +155,7 @@ def page(fn, title, desc, body, branche=None):
           <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
           <li><a href="samenstellen.html">Zelf samenstellen</a></li>
           <li><a href="offerte.html">Offerte aanvragen</a></li>
+          <li><a href="privacy.html">Privacyverklaring</a></li>
           <li><a href="mailto:{MAIL}">{MAIL}</a></li>
           <li>{TEL}</li>
         </ul>
@@ -549,7 +551,7 @@ off = f"""<section class="hero hero--klein">
         <span class="hint">Liefst als PDF, SVG of AI. Een PNG of JPG mag ook.</span>
       </div>
       <div class="veld"><label for="bericht">Toelichting</label><textarea id="bericht" name="bericht" placeholder="Bijv. kleur van de kleding, maten, plek van het logo (borst, rug, mouw)"></textarea></div>
-      <label class="akkoord"><input type="checkbox" id="akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden. *</span></label>
+      <label class="akkoord"><input type="checkbox" id="akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden, zoals beschreven in de <a href="privacy.html" target="_blank">privacyverklaring</a>. *</span></label>
       <div><button class="knop knop--hoofd" type="submit">Verstuur aanvraag</button></div>
     </form>
     <aside class="contactblok">
@@ -586,6 +588,7 @@ files = {
     "bedrijfskleding.html": ("Bedrijfskleding per branche – Bordoo", "Bedrijfskleding met logo voor elke branche: horeca, bouw, garage, schoonmaak, zorg, transport, kantoor en sport.", overzicht, None),
     "offerte.html": ("Offerte aanvragen – Bordoo", "Vraag vrijblijvend een offerte aan voor geborduurde of bedrukte bedrijfskleding.", off, None),
     "bedankt.html": ("Bedankt – Bordoo", "Uw aanvraag is ontvangen.", bedankt, None),
+    "privacy.html": ("Privacyverklaring – Bordoo", "Hoe Bordoo omgaat met uw persoonsgegevens: welke gegevens, waarvoor, hoe lang en uw rechten.", PRIVACY, None),
 }
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])

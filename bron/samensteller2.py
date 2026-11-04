@@ -100,7 +100,7 @@ def samensteller_body(tel, mail):
       <div class="ss-samenvatting">
         <h3>Uw samenstelling</h3>
         <dl id="ss-overzicht"></dl>
-        <label class="akkoord"><input type="checkbox" id="s-akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden. *</span></label>
+        <label class="akkoord"><input type="checkbox" id="s-akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden, zoals beschreven in de <a href="privacy.html" target="_blank">privacyverklaring</a>. *</span></label>
         <button class="knop knop--hoofd" type="submit">Vraag offerte aan</button>
         <p class="hint">Vrijblijvend. U hoort meestal binnen twee werkdagen van ons. Vragen? Mail <a href="mailto:{mail}">{mail}</a>.</p>
       </div>

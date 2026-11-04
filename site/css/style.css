@@ -407,3 +407,11 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .usp { background: var(--zwart); border-bottom: 0; color: var(--wit); }
 .usp__raster span { color: rgba(255,255,255,.65); }
 .kopstrook { background: linear-gradient(100deg, var(--wit) 0%, var(--wit) 55%, #F4ECEA 100%); border-bottom: 3px solid var(--bordeaux); }
+
+/* Tekstpagina's (privacyverklaring) */
+.tekstpagina { display: grid; gap: 14px; }
+.tekstpagina > * { max-width: 70ch; }
+.tekstpagina h2 { font-size: 22px; margin-top: 18px; }
+.tekstpagina ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.tekstpagina p, .tekstpagina li { color: var(--tekst); }
+.akkoord a { color: var(--bordeaux); }
