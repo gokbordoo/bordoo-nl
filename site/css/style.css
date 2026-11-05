@@ -381,7 +381,10 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .toptel svg { width: 18px; height: 18px; fill: var(--bordeaux); flex: none; }
 .toptel:hover { color: var(--bordeaux); }
 .topacties { gap: 18px; }
-@media (max-width: 1100px) { .toptel span { display: none; } .toptel { width: 40px; height: 40px; justify-content: center; border: 1px solid var(--lijn); border-radius: 50%; } }
+/* V2: alleen een belknop (nummer verborgen, wel voorleesbaar via aria-label) */
+.toptel span { display: none; }
+.toptel { width: 42px; height: 42px; justify-content: center; border: 1px solid var(--lijn); border-radius: 50%; transition: border-color .15s, background .15s; }
+.toptel:hover { border-color: var(--bordeaux); background: rgba(94,20,36,.06); }
 
 /* ===== BORDOO V2 – homepage ===== */
 .v2-hero { position: relative; overflow: hidden; color: var(--wit); padding-block: clamp(48px, 7vw, 88px);
@@ -516,3 +519,11 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .pp-groep ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
 .pp-groep li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; }
 .pp-img { width: 40px; height: 40px; flex: none; background: var(--lichtgrijs); border-radius: 4px; }
+
+/* ===== BORDOO V2 – samensteller: meerdere producten ===== */
+.ss-mandbalk { display: grid; gap: 8px; justify-items: start; padding: 4px 0 22px; margin-bottom: 14px; border-bottom: 1px solid var(--lijn); }
+.ss-mandlijst { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; counter-reset: regel; }
+.ss-mandlijst li { counter-increment: regel; display: grid; grid-template-columns: 26px 1fr 28px; gap: 10px; align-items: start; background: var(--wit); border-radius: var(--radius); padding: 10px 12px; font-size: 14.5px; }
+.ss-mandlijst li::before { content: counter(regel); display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--bordeaux); color: var(--wit); font-size: 12px; font-weight: 700; }
+.ss-mandlijst li span { color: var(--tekst-zacht); font-size: 13.5px; }
+.ss-huidig-kop { font: 600 13px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--goud-tekst); margin: 4px 0 -4px; }

@@ -283,9 +283,37 @@ def korte_werkbroek():
     return out
 
 
-VOOR_ACHTER = {"polo": polo, "tshirt": tshirt, "sweater": sweater, "hoodie": hoodie, "softshell": softshell, "fleece": fleece, "werkjas": werkjas,
+def werkbroek():
+    voor = broek(kniestukken=True)
+    achter = (DEFS + lichaam(BROEK) + naad("M38 22 L82 22", .9) + naad("M60 22 L60 44", .9)
+              + deel("M42 28 L54 28 L54 40 Q48 41.5 42 40 Z", stiksel("M42.4 30 L53.6 30"))
+              + deel("M66 28 L78 28 L78 40 Q72 41.5 66 40 Z", stiksel("M66.4 30 L77.6 30"))
+              + deel("M37 62 L52.5 62 L52 76 L36.6 76 Z") + deel("M67.5 62 L83 62 L83.4 76 L68 76 Z")
+              + plooien("M45 46 Q44 70 46 95", "M75 46 Q76 70 74 95"))
+    return voor, achter
+
+
+def korte_werkbroek_va():
+    achter = (DEFS + lichaam(KORT) + naad("M37 38 L83 38", .9) + naad("M60 38 L60 56", .9) + stiksel("M37.4 36.2 L82.6 36.2")
+              + deel("M41 44 L53 44 L53 55 Q47 56.4 41 55 Z", stiksel("M41.4 46 L52.6 46"))
+              + deel("M67 44 L79 44 L79 55 Q73 56.4 67 55 Z", stiksel("M67.4 46 L78.6 46"))
+              + stiksel("M35.2 81.4 L54.6 81.4") + stiksel("M65.4 81.4 L84.8 81.4") + plooien("M44 58 Q43 70 45 80", "M76 58 Q77 70 75 80"))
+    return korte_werkbroek(), achter
+
+
+def overall_va():
+    sil = "M44 22 L76 22 L76 38 L83 38 L85 99 Q85 102 82 102 L67 102 Q65 102 64.8 99.5 L60.6 62 L59.4 62 L55.2 99.5 Q55 102 53 102 L38 102 Q35 102 35 99 L37 38 L44 38 Z"
+    banden = ('<path d="M41 3 L75 30 M79 3 L45 30" stroke="var(--stof)" stroke-width="3.4" stroke-linecap="round"/>'
+              '<path d="M41 3 L75 30 M79 3 L45 30" stroke="rgba(0,0,0,.25)" stroke-width="3.4" stroke-linecap="round"/>')
+    achter = (DEFS + banden + lichaam(sil) + naad("M37 40 L83 40", .9)
+              + deel("M42 46 L54 46 L54 58 Q48 59.5 42 58 Z") + deel("M66 46 L78 46 L78 58 Q72 59.5 66 58 Z")
+              + '<path d="M37 80 L52 80 L51.6 84 L36.8 84 Z M68 80 L83 80 L83.2 84 L68.4 84 Z" fill="url(#rl-refl)"/>' + plooien("M45 62 Q44 80 46 95", "M75 62 Q76 80 74 95"))
+    return overall(), achter
+
+
+VOOR_ACHTER = {"werkbroek": werkbroek, "korte_werkbroek": korte_werkbroek_va, "overall": overall_va, "polo": polo, "tshirt": tshirt, "sweater": sweater, "hoodie": hoodie, "softshell": softshell, "fleece": fleece, "werkjas": werkjas,
                "bodywarmer": bodywarmer, "hesje": hesje, "koksbuis": koksbuis, "overhemd": overhemd, "tuniek": tuniek, "schort": schort, "cap": cap, "tas": tas}
-ALLEEN = {"korte_werkbroek": korte_werkbroek, "werkbroek": lambda: broek(kniestukken=True), "koksbroek": lambda: broek(ruit=True), "overall": overall, "handdoek": handdoek}
+ALLEEN = {"koksbroek": lambda: broek(ruit=True), "handdoek": handdoek}
 
 
 def voorkant(naam):

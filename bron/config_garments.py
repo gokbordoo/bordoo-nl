@@ -75,7 +75,7 @@ KLEUREN = {
 }
 
 # welk configuratorproduct hoort bij een product uit het branchemenu
-VAN_PRODUCT = {"koksbuis": "koksbuis", "schort": "schort", "polo": "polo", "cap": "cap", "werkjas": "werkjas", "hesje": "hesje", "hoodie": "hoodie",
+VAN_PRODUCT = {"werkbroek": "werkbroek", "korte_werkbroek": "korte_werkbroek", "overall": "overall", "koksbuis": "koksbuis", "schort": "schort", "polo": "polo", "cap": "cap", "werkjas": "werkjas", "hesje": "hesje", "hoodie": "hoodie",
                "tshirt": "tshirt", "bodywarmer": "bodywarmer", "softshell": "softshell", "fleece": "fleece", "tuniek": "tuniek", "kapschort": "schort",
                "overhemd": "overhemd", "trui": "sweater", "sportshirt": "tshirt", "trainingsjas": "fleece", "tas": "tas"}
 
@@ -132,6 +132,18 @@ _POS = {
     "cap": [_p("voorkant", "Voorkant", "voor", 46, 57, (5, 10, 7))],
     "tas": [_p("midden", "Midden", "voor", 60, 73, (10, 25, 15))],
 }
+BROEK_KLEUREN = ["zwart", "antraciet", "marine", "grijs"]
+PRODUCTEN += [
+    ("werkbroek", "Werkbroek", _R.voorkant("werkbroek"), _R.achterkant("werkbroek"), BROEK_KLEUREN, [], "kleding"),
+    ("korte_werkbroek", "Korte werkbroek", _R.voorkant("korte_werkbroek"), _R.achterkant("korte_werkbroek"), BROEK_KLEUREN, [], "kleding"),
+    ("overall", "Overall", _R.voorkant("overall"), _R.achterkant("overall"), ["marine", "zwart", "antraciet", "rood", "kobalt"], [], "kleding"),
+]
+_POS.update({
+    "werkbroek": [_p("pijp-links", "Pijp links", "voor", 44, 34, (5, 10, 7)), _p("zak", "Beenzak", "voor", 44.7, 69, (5, 9, 6)),
+                  _p("achterzak", "Achterzak", "achter", 72, 34, (5, 9, 6))],
+    "korte_werkbroek": [_p("pijp-links", "Pijp links", "voor", 41, 58, (5, 9, 6)), _p("achterzak", "Achterzak", "achter", 73, 50, (5, 9, 6))],
+    "overall": [_p("borst", "Borst", "voor", 60, 27, (6, 12, 9)), _p("rug", "Rug (bovenaan)", "achter", 60, 30, (10, 18, 15))],
+})
 PRODUCTEN = [(i, n, v, a, k, _POS.get(i, pos), m) for (i, n, v, a, k, pos, m) in PRODUCTEN]
 
 # ---------- Productfoto's (vervangen de tekening als er een foto is) ----------
