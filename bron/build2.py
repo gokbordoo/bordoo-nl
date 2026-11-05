@@ -1,7 +1,7 @@
 """Bordoo-website v2: menu per branche met producten, pagina per branche, uitleg met tekeningen."""
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from garments import svg as kleding, G, TSHIRT, logo as oo, LIJN
+from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, _STIJL, BESTANDEN_MAP
 from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
@@ -90,6 +90,23 @@ def mobielmenu():
     return "\n".join(out)
 
 
+NAMEN = {"bedrijfskleding.html": "Alle branches", "borduren-bedrukken.html": "Borduren &amp; bedrukken", "samenstellen.html": "Zelf samenstellen",
+         "offerte.html": "Offerte &amp; contact", "privacy.html": "Privacyverklaring", "bedankt.html": "Bedankt"}
+
+
+def kruimelpad(fn, branche):
+    """Kruimelpad onder de kop (niet op de homepage)."""
+    if fn == "index.html":
+        return ""
+    stappen = [("index.html", "Home")]
+    if branche:
+        stappen += [("bedrijfskleding.html", "Alle branches"), (fn, next(b[1] for b in B if b[0] == branche))]
+    else:
+        stappen.append((fn, NAMEN.get(fn, "")))
+    items = "".join(f'<li><a href="{f}">{n}</a></li>' for f, n in stappen[:-1]) + f'<li aria-current="page">{stappen[-1][1]}</li>'
+    return f'<nav class="kruimel" aria-label="Kruimelpad"><ol class="wrap">{items}</ol></nav>\n'
+
+
 def page(fn, title, desc, body, branche=None):
     def cur(f):
         return ' aria-current="page"' if f == fn else ""
@@ -106,6 +123,7 @@ def page(fn, title, desc, body, branche=None):
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<a class="skiplink" href="#inhoud">Naar de inhoud</a>
 <header class="header">
   <div class="wrap topbalk">
     <nav class="toplinks" aria-label="Informatie">
@@ -137,8 +155,8 @@ def page(fn, title, desc, body, branche=None):
     </div>
   </nav>
 </header>
-<main>
-{body}
+<main id="inhoud">
+{kruimelpad(fn, branche)}{body}
 </main>
 <footer class="footer">
   <div class="wrap">
@@ -152,26 +170,39 @@ def page(fn, title, desc, body, branche=None):
         <ul>{"".join(f'<li><a href="branche-{b[0]}.html">{b[1]}</a></li>' for b in B)}</ul>
       </div>
       <div>
-        <h3>Bordoo</h3>
+        <h3>Diensten</h3>
         <ul>
-          <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
           <li><a href="samenstellen.html">Zelf samenstellen</a></li>
           <li><a href="offerte.html">Offerte aanvragen</a></li>
-          <li><a href="privacy.html">Privacyverklaring</a></li>
-          <li><a href="mailto:{MAIL}">{MAIL}</a></li>
+          <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
+          <li><a href="bedrijfskleding.html">Alle branches</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <ul>
           <li>{TEL}</li>
+          <li><a href="mailto:{MAIL}">{MAIL}</a></li>
+          <li><a href="offerte.html">Contactformulier</a></li>
         </ul>
       </div>
     </div>
     <div class="footer__onder">
       <span>© 2026 Bordoo</span>
-      <span>bordoo.nl</span>
+      <span><a href="privacy.html">Privacyverklaring</a> · bordoo.nl</span>
     </div>
   </div>
 </footer>
 <script>
   var k = document.querySelector('.menuknop'), m = document.getElementById('mobielmenu');
   k.addEventListener('click', function () {{ var o = m.classList.toggle('open'); k.setAttribute('aria-expanded', o); k.textContent = o ? 'Sluiten' : 'Menu'; }});
+  document.addEventListener('keydown', function (e) {{
+    if (e.key !== 'Escape') return;
+    var d = document.activeElement && document.activeElement.closest('.drop');
+    if (d) {{ d.querySelector('.drop__kop').focus(); d.classList.add('dicht'); }}
+    if (m.classList.contains('open')) {{ m.classList.remove('open'); k.setAttribute('aria-expanded', false); k.textContent = 'Menu'; k.focus(); }}
+  }});
+  document.querySelectorAll('.drop').forEach(function (d) {{ d.addEventListener('mouseleave', function () {{ d.classList.remove('dicht'); }}); d.addEventListener('focusout', function (e) {{ if (!d.contains(e.relatedTarget)) d.classList.remove('dicht'); }}); }});
 </script>
 </body>
 </html>
@@ -594,6 +625,9 @@ files = {
 }
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])
+(OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
+for naam in _STIJL:
+    (OUT / BESTANDEN_MAP / f"{naam}.svg").write_text(bestand_svg(naam), encoding="utf-8")
 for fn, (title, desc, body, br) in files.items():
     (OUT / fn).write_text(page(fn, title, desc, body, br), encoding="utf-8")
 print("ok", len(files))

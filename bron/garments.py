@@ -98,3 +98,21 @@ def svg(naam, cls="kledingtekening"):
     mark = logo(x, y, BORDEAUX if _licht(hexk) else WIT, .8) if x else ""
     return (f'<svg class="{cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false" style="--stof:{hexk};--naad:{naadk}">'
             f'{_R.voorkant(naam).replace("rl-", f"rl{next(_TELLER)}-")}{mark}</svg>')
+
+
+# Kledingtekeningen als losse bestanden (V2): de browser laadt elk bestand één keer
+BESTANDEN_MAP = "img/kleding"
+
+
+def bestand_svg(naam):
+    """Inhoud van img/kleding/<naam>.svg: zelfde tekening als svg(), als zelfstandig bestand."""
+    kleur, x, y = _STIJL[naam]
+    hexk = _KLEUR[kleur]
+    naadk = "rgba(0,0,0,.35)" if _licht(hexk) else "rgba(255,255,255,.35)"
+    mark = logo(x, y, BORDEAUX if _licht(hexk) else WIT, .8) if x else ""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+            f'style="--stof:{hexk};--naad:{naadk}">{_R.voorkant(naam)}{mark}</svg>\n')
+
+
+def img(naam, cls="kledingtekening"):
+    return f'<img class="{cls}" src="{BESTANDEN_MAP}/{naam}.svg" alt="" width="120" height="120" loading="lazy" decoding="async">'
