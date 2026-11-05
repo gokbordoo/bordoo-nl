@@ -90,6 +90,27 @@ def home_body(branches, P, kleding, doorsnede, CTA, stapbeeld, tel_link):
   </div>
 </section>
 
+<section class="section section--wit section--compact" id="branches" aria-labelledby="br-kop">
+  <div class="wrap">
+    <div class="kop kop--rij">
+      <div><span class="eyebrow">Kleding per branche</span><h2 id="br-kop">Kleding die past bij uw vak</h2></div>
+      <a class="meer" href="bedrijfskleding.html">Alle branches →</a>
+    </div>
+    <div class="brkaarten">{kaarten}</div>
+  </div>
+</section>
+
+<section class="section section--compact" aria-labelledby="vb-kop">
+  <div class="wrap">
+    <div class="kop kop--rij">
+      <div><span class="eyebrow">Voorbeelden</span><h2 id="vb-kop">Zo komt uw logo op de kleding</h2></div>
+      <a class="meer" href="samenstellen.html">Probeer het met uw logo →</a>
+    </div>
+    <div class="voorbeelden">{vb_html}</div>
+    <p class="hint vb__noot">Voorbeeldweergaven met het Bordoo-logo. Maten zijn gebruikelijke richtlijnen.</p>
+  </div>
+</section>
+
 <section class="section section--wit section--compact" aria-labelledby="diensten-kop">
   <div class="wrap">
     <div class="kop"><span class="eyebrow">Wat we doen</span><h2 id="diensten-kop">Twee technieken, één aanspreekpunt</h2>
@@ -114,27 +135,6 @@ def home_body(branches, P, kleding, doorsnede, CTA, stapbeeld, tel_link):
         </div>
       </article>
     </div>
-  </div>
-</section>
-
-<section class="section section--compact" aria-labelledby="vb-kop">
-  <div class="wrap">
-    <div class="kop kop--rij">
-      <div><span class="eyebrow">Voorbeelden</span><h2 id="vb-kop">Zo komt uw logo op de kleding</h2></div>
-      <a class="meer" href="samenstellen.html">Probeer het met uw logo →</a>
-    </div>
-    <div class="voorbeelden">{vb_html}</div>
-    <p class="hint vb__noot">Voorbeeldweergaven met het Bordoo-logo. Maten zijn gebruikelijke richtlijnen.</p>
-  </div>
-</section>
-
-<section class="section section--wit section--compact" id="branches" aria-labelledby="br-kop">
-  <div class="wrap">
-    <div class="kop kop--rij">
-      <div><span class="eyebrow">Kleding per branche</span><h2 id="br-kop">Kleding die past bij uw vak</h2></div>
-      <a class="meer" href="bedrijfskleding.html">Alle branches →</a>
-    </div>
-    <div class="brkaarten">{kaarten}</div>
   </div>
 </section>
 
