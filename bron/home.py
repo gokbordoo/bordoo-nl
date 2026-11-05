@@ -151,7 +151,7 @@ def home_body(branches, P, kleding, doorsnede, CTA, stapbeeld, tel_link):
       <li><h3>Productie</h3><p>Na uw akkoord borduren of bedrukken wij de kleding.</p></li>
       <li><h3>Levering</h3><p>U haalt de kleding op of wij sturen het naar u toe.</p></li>
     </ol>
-    <div class="knoppen" style="margin-top:28px"><a class="knop knop--hoofd v2-knop-licht" href="samenstellen.html">Begin met samenstellen</a></div>
+    <div class="knoppen" style="margin-top:28px;align-items:center"><a class="knop knop--hoofd v2-knop-licht" href="samenstellen.html">Begin met samenstellen</a><a class="meer v2-meer-licht" href="werkwijze.html">Meer over onze werkwijze →</a></div>
   </div>
 </section>
 

@@ -546,3 +546,23 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .bevestiging__stappen { display: grid; gap: 14px; }
 .stappen-lijst { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
 .stappen-lijst li::marker { color: var(--goud-tekst); font-weight: 700; }
+
+/* ===== BORDOO V2 – vertrouwen ===== */
+.v2-meer-licht { color: var(--wit); }
+.ww { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+.ww-stap { display: grid; grid-template-columns: 56px 1fr; gap: 18px; background: var(--wit); border: 1px solid var(--lijn); border-radius: var(--radius); padding: 22px; }
+.ww-nr { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; background: var(--bordeaux); color: var(--wit); font: 800 20px var(--display); }
+.ww-stap h2 { font-size: 21px; margin-bottom: 6px; }
+.ww-stap p { color: var(--tekst-zacht); margin-bottom: 10px; }
+.ww-stap .vinklijst { font-size: 15px; gap: 6px; }
+.faq-wrap { display: grid; gap: 28px; max-width: 860px; }
+.faq-groep { display: grid; gap: 8px; }
+.faq-groep h2 { font-size: 22px; margin-bottom: 6px; }
+.faq { background: var(--wit); border: 1px solid var(--lijn); border-radius: var(--radius); }
+.faq summary { cursor: pointer; list-style: none; padding: 16px 48px 16px 18px; font-weight: 600; position: relative; }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 18px; top: 50%; transform: translateY(-50%); color: var(--goud-tekst); font-size: 20px; font-weight: 700; }
+.faq[open] summary::after { content: "–"; }
+.faq[open] summary { border-bottom: 1px solid var(--lijn); }
+.faq p { padding: 14px 18px 18px; color: var(--tekst); }
+.contactblok .meer { justify-self: start; }

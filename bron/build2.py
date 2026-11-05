@@ -5,6 +5,7 @@ from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, b
 import config_garments as CG
 from branches_v2 import aanbevolen, cta_branche
 import keuzewijzer as KW
+import vertrouwen as VT
 from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
@@ -95,7 +96,8 @@ def mobielmenu():
 
 
 NAMEN = {"bedrijfskleding.html": "Alle branches", "borduren-bedrukken.html": "Borduren &amp; bedrukken", "samenstellen.html": "Zelf samenstellen",
-         "offerte.html": "Offerte &amp; contact", "privacy.html": "Privacyverklaring", "bedankt.html": "Bedankt"}
+         "offerte.html": "Offerte &amp; contact", "privacy.html": "Privacyverklaring", "bedankt.html": "Bedankt",
+         "over-bordoo.html": "Over Bordoo", "werkwijze.html": "Werkwijze", "veelgestelde-vragen.html": "Veelgestelde vragen", "404.html": "Pagina niet gevonden"}
 
 
 def kruimelpad(fn, branche):
@@ -155,6 +157,9 @@ def page(fn, title, desc, body, branche=None):
       <a class="mobiel-link" href="borduren-bedrukken.html">Borduren &amp; bedrukken</a>
       <a class="mobiel-link" href="bedrijfskleding.html">Alle branches</a>
       <a class="mobiel-link" href="offerte.html">Offerte &amp; contact</a>
+      <a class="mobiel-link" href="werkwijze.html">Werkwijze</a>
+      <a class="mobiel-link" href="veelgestelde-vragen.html">Veelgestelde vragen</a>
+      <a class="mobiel-link" href="over-bordoo.html">Over Bordoo</a>
       <a class="mobiel-link" href="tel:+31648399904">Bel ons: +31 6 48 39 99 04</a>
     </div>
   </nav>
@@ -174,12 +179,14 @@ def page(fn, title, desc, body, branche=None):
         <ul>{"".join(f'<li><a href="branche-{b[0]}.html">{b[1]}</a></li>' for b in B)}</ul>
       </div>
       <div>
-        <h3>Diensten</h3>
+        <h3>Bordoo</h3>
         <ul>
           <li><a href="samenstellen.html">Zelf samenstellen</a></li>
           <li><a href="offerte.html">Offerte aanvragen</a></li>
           <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
-          <li><a href="bedrijfskleding.html">Alle branches</a></li>
+          <li><a href="werkwijze.html">Werkwijze</a></li>
+          <li><a href="veelgestelde-vragen.html">Veelgestelde vragen</a></li>
+          <li><a href="over-bordoo.html">Over Bordoo</a></li>
         </ul>
       </div>
       <div>
@@ -676,6 +683,7 @@ off = f"""<section class="hero hero--klein">
       <div class="contactregel"><span>Telefoon / WhatsApp</span>{TEL}</div>
       <hr class="goudlijn">
       <p class="hint">Particulier? Ook voor één kledingstuk met een naam of tekst kunt u ons een bericht sturen.</p>
+      <a class="meer" href="veelgestelde-vragen.html">Bekijk de veelgestelde vragen →</a>
     </aside>
   </div>
 </section>
@@ -762,10 +770,19 @@ files = {
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])
 (OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
+files.update({
+    "over-bordoo.html": ("Over Bordoo – borduren en bedrukken van bedrijfskleding", "Bordoo borduurt en bedrukt bedrijfskleding met uw logo. Persoonlijk contact, eerlijk advies en eerst een voorbeeld.", VT.over(TEL, MAIL, CTA), None),
+    "werkwijze.html": ("Werkwijze – Bordoo", "Zo werkt Bordoo: van aanvraag en voorstel tot productie en levering van uw kleding met logo.", VT.werkwijze(CTA), None),
+    "veelgestelde-vragen.html": ("Veelgestelde vragen – Bordoo", "Antwoorden over prijzen, aantallen, logobestanden, borduren of bedrukken, levering en wassen.", VT.faq(CTA), None),
+    "404.html": ("Pagina niet gevonden – Bordoo", "Deze pagina bestaat niet (meer).", VT.niet_gevonden(), None),
+})
 for naam in _STIJL:
     (OUT / BESTANDEN_MAP / f"{naam}.svg").write_text(bestand_svg(naam), encoding="utf-8")
     if heeft_achterkant(naam):
         (OUT / BESTANDEN_MAP / f"{naam}-achter.svg").write_text(bestand_svg_achter(naam), encoding="utf-8")
 for fn, (title, desc, body, br) in files.items():
-    (OUT / fn).write_text(page(fn, title, desc, body, br), encoding="utf-8")
+    html = page(fn, title, desc, body, br)
+    if fn == "404.html":
+        html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<base href="/">\n<meta name="robots" content="noindex">', 1)
+    (OUT / fn).write_text(html, encoding="utf-8")
 print("ok", len(files))
