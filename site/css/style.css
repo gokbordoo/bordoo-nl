@@ -224,7 +224,7 @@ tr:last-child td, tr:last-child th { border-bottom: 0; }
 .tegel__tekst p { font-size: 14px; color: var(--tekst-zacht); line-height: 1.45; }
 
 /* Producten op branchepagina */
-.producten { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+.producten { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
 .product { background: var(--wit); border: 1px solid var(--lijn); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-rows: auto 1fr; scroll-margin-top: 170px; }
 .product:target { border-color: var(--goud); box-shadow: 0 0 0 2px var(--goud); }
 .product__beeld { background: #ECE7E4; display: grid; place-items: center; aspect-ratio: 4 / 3; }
@@ -465,3 +465,18 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 @media (max-width: 560px) { .footer__raster { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .drop__paneel { transition: none; } }
 .footer .stack { align-content: start; }
+
+/* ===== BORDOO V2 – productpresentatie ===== */
+.product__beeld { position: relative; }
+.product__beeld .achterkant { position: absolute; inset: 0; margin: auto; opacity: 0; transition: opacity .2s ease; }
+.product__beeld.heeft-achter:hover > img:first-child, .product:focus-within .heeft-achter > img:first-child { opacity: 0; }
+.product__beeld.heeft-achter:hover .achterkant, .product:focus-within .heeft-achter .achterkant { opacity: 1; }
+.product__beeld > img:first-child { transition: opacity .2s ease; }
+.product__kant { position: absolute; right: 8px; bottom: 8px; font-size: 11px; font-weight: 600; letter-spacing: .06em; color: var(--tekst-zacht); background: rgba(255,255,255,.85); padding: 2px 8px; border-radius: 999px; }
+.productinfo { margin: 2px 0 0; display: grid; gap: 6px; font-size: 13.5px; border-top: 1px solid var(--lijn); padding-top: 10px; }
+.productinfo div { display: grid; grid-template-columns: 62px 1fr; gap: 8px; align-items: center; }
+.productinfo dt { color: var(--tekst-zacht); }
+.productinfo dd { margin: 0; }
+.kleurstippen { display: inline-flex; flex-wrap: wrap; gap: 4px; }
+.kleurstip { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); display: inline-block; }
+@media (prefers-reduced-motion: reduce) { .product__beeld img { transition: none; } }

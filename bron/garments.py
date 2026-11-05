@@ -116,3 +116,16 @@ def bestand_svg(naam):
 
 def img(naam, cls="kledingtekening"):
     return f'<img class="{cls}" src="{BESTANDEN_MAP}/{naam}.svg" alt="" width="120" height="120" loading="lazy" decoding="async">'
+
+
+def bestand_svg_achter(naam):
+    """Achterkant (zonder logo) als los bestand, alleen voor kleding met een achterkant."""
+    kleur, _, _ = _STIJL[naam]
+    hexk = _KLEUR[kleur]
+    naadk = "rgba(0,0,0,.35)" if _licht(hexk) else "rgba(255,255,255,.35)"
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+            f'style="--stof:{hexk};--naad:{naadk}">{_R.achterkant(naam)}</svg>\n')
+
+
+def heeft_achterkant(naam):
+    return naam in _R.VOOR_ACHTER and _R.VOOR_ACHTER[naam]()[1] is not None

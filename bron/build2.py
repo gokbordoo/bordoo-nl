@@ -1,7 +1,8 @@
 """Bordoo-website v2: menu per branche met producten, pagina per branche, uitleg met tekeningen."""
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, _STIJL, BESTANDEN_MAP
+from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, bestand_svg_achter, heeft_achterkant, _STIJL, BESTANDEN_MAP
+import config_garments as CG
 from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
@@ -495,13 +496,45 @@ overzicht = f"""<section class="hero hero--klein">
 {CTA}"""
 
 
+def productinfo(pk):
+    """Kleuren, maten en logoplekken uit de samensteller, zodat beide altijd hetzelfde tonen."""
+    cid = VAN_PRODUCT.get(pk)
+    prod = next((p for p in CG.PRODUCTEN if p[0] == cid), None)
+    if not prod:
+        return ""
+    kleuren = "".join(f'<span class="kleurstip" style="background:{CG.KLEUREN[k][1]}" title="{CG.KLEUREN[k][0]}"></span>' for k in prod[4])
+    namen = ", ".join(CG.KLEUREN[k][0].lower() for k in prod[4])
+    maten = "XS t/m 3XL" if prod[6] == "kleding" else "Eén maat"
+    plekken = []
+    for q in prod[5]:
+        n = q[1].split(" (")[0]
+        n = "Borst" if n.startswith("Borst") else "Mouw" if n.startswith("Mouw") else n
+        if n not in plekken:
+            plekken.append(n)
+    return f'''<dl class="productinfo">
+          <div><dt>Kleuren</dt><dd><span class="kleurstippen" role="img" aria-label="{namen}">{kleuren}</span></dd></div>
+          <div><dt>Maten</dt><dd>{maten}</dd></div>
+          <div><dt>Logo op</dt><dd>{" · ".join(plekken)}</dd></div>
+        </dl>'''
+
+
+def productbeeld(pk):
+    naam = P[pk][1]
+    if heeft_achterkant(naam):
+        return (f'<div class="product__beeld heeft-achter">{kleding(naam)}'
+                f'<img class="achterkant" src="{BESTANDEN_MAP}/{naam}-achter.svg" alt="" width="120" height="120" loading="lazy" decoding="async">'
+                f'<span class="product__kant" aria-hidden="true">Voor · Achter</span></div>')
+    return f'<div class="product__beeld">{kleding(naam)}</div>'
+
+
 def branchepagina(k, menu, titel, intro, tegel, icon, prods):
     kaarten = "".join(f'''<article class="product" id="{pk}">
-      <div class="product__beeld">{kleding(P[pk][1])}</div>
+      {productbeeld(pk)}
       <div class="product__tekst">
         <h3>{P[pk][0]}</h3>
         <p>{P[pk][2]}</p>
         <div class="tags">{tags(P[pk][3])}</div>
+        {productinfo(pk)}
         <div class="product__links">{f'<a class="knop knop--hoofd knop--klein" href="samenstellen.html?product={pk}">Stel samen</a>' if pk in VAN_PRODUCT else ''}<a class="meer" href="offerte.html?branche={k}&amp;product={pk}">Offerte aanvragen →</a></div>
       </div>
     </article>''' for pk in prods)
@@ -628,6 +661,8 @@ for b in B:
 (OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
 for naam in _STIJL:
     (OUT / BESTANDEN_MAP / f"{naam}.svg").write_text(bestand_svg(naam), encoding="utf-8")
+    if heeft_achterkant(naam):
+        (OUT / BESTANDEN_MAP / f"{naam}-achter.svg").write_text(bestand_svg_achter(naam), encoding="utf-8")
 for fn, (title, desc, body, br) in files.items():
     (OUT / fn).write_text(page(fn, title, desc, body, br), encoding="utf-8")
 print("ok", len(files))
