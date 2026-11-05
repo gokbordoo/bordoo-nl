@@ -78,9 +78,9 @@ G["handdoek"] = lambda: (p("M26 74 L94 74 L94 96 L26 96 Z", WIT) + p("M30 56 L90
 import realistisch as _R
 import itertools
 _TELLER = itertools.count(1)
-_KLEUR = {"zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bordeaux": "#5E1424", "wit": "#FAFAF8", "fluogeel": "#E3EA3A", "zand": "#D8CBB5"}
+_KLEUR = {"oranje": "#F26A1B", "zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bordeaux": "#5E1424", "wit": "#FAFAF8", "fluogeel": "#E3EA3A", "zand": "#D8CBB5"}
 _STIJL = {"tshirt": ("zwart", 68, 41), "polo": ("bordeaux", 68, 41), "overhemd": ("wit", 69, 35), "hoodie": ("antraciet", 60, 50),
-          "werkjas": ("marine", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
+          "werkjas": ("oranje", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
           "hesje": ("fluogeel", 64, 54), "koksbuis": ("wit", 73, 37), "schort": ("zwart", 60, 33), "koksbroek": ("zwart", None, None),
           "werkbroek": ("antraciet", 44, 34), "korte_werkbroek": ("antraciet", 41, 58), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
           "tas": ("zand", 60, 74), "handdoek": ("bordeaux", 60, 46)}

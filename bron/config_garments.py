@@ -41,7 +41,7 @@ PRODUCTEN = [
     ("softshell", "Softshell jas", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M44 66 L52 80 M76 66 L68 80"), body(LANG) + ACHTER_KRAAG,
      JAS, JAS_POS, "kleding"),
     ("werkjas", "Werkjas", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M44 46 L56 46 L56 58 L44 58 Z M64 46 L76 46 L76 58 L64 58 Z")
-     + ln("M40 84 L80 84", 3, "#A9A3A4"), body(LANG) + ACHTER_KRAAG + ln("M40 84 L80 84", 3, "#A9A3A4"), ["zwart", "antraciet", "marine", "rood", "kobalt"], JAS_POS, "kleding"),
+     + ln("M40 84 L80 84", 3, "#A9A3A4"), body(LANG) + ACHTER_KRAAG + ln("M40 84 L80 84", 3, "#A9A3A4"), ["fluooranje", "zwart", "antraciet", "marine", "rood", "kobalt"], JAS_POS, "kleding"),
     ("bodywarmer", "Bodywarmer", body(VEST) + KRAAG_RITS + ln("M60 18 L60 100") + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)),
      body(VEST) + ACHTER_KRAAG + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)), JAS, VEST_POS, "kleding"),
     ("fleece", "Fleecevest", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M40 96 L80 96"), body(LANG) + ACHTER_KRAAG + ln("M40 96 L80 96"),

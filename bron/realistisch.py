@@ -161,7 +161,8 @@ def fleece():
 
 
 def werkjas():
-    refl = '<path d="M38.6 82 L81.4 82 L81.5 86 L38.5 86 Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>'
+    refl = ('<path d="M38.6 70 L81.4 70 L81.5 74 L38.5 74 Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>'
+            '<path d="M38.6 82 L81.4 82 L81.5 86 L38.5 86 Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>')
     refl_mouw = '<path d="M24.6 74 L33.6 75.3 L33 79 L24 77.6 Z M95.4 74 L86.4 75.3 L87 79 L96 77.6 Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>'
     zak = lambda x: deel(f"M{x} 46 L{x + 12} 46 L{x + 12} 58 Q{x + 6} 59 {x} 58 Z") + deel(f"M{x - .5} 44 L{x + 12.5} 44 L{x + 12.5} 49 L{x - .5} 49 Z", stiksel(f"M{x} 47.6 L{x + 12} 47.6"))
     return (DEFS + lichaam(L) + PLOOI_L + BOORD_L + zak(44) + zak(64) + refl + refl_mouw + rits(12, 102) + opstaande_kraag(),
