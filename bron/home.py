@@ -113,8 +113,12 @@ def home_body(branches, P, kleding, doorsnede, CTA, stapbeeld, tel_link):
 
 <section class="section section--wit section--compact" aria-labelledby="diensten-kop">
   <div class="wrap">
-    <div class="kop"><span class="eyebrow">Wat we doen</span><h2 id="diensten-kop">Twee technieken, één aanspreekpunt</h2>
-      <p class="intro">Welke techniek past, hangt af van uw logo, de kleding en het aantal stuks. We adviseren u graag.</p></div>
+    <div class="dienst-intro">
+      <div class="kop"><span class="eyebrow">Wat we doen</span><h2 id="diensten-kop">Twee technieken, één aanspreekpunt</h2>
+        <p class="intro">Borduren zit ín de stof: chique, met reliëf en het gaat jaren mee. Bedrukken ligt óp de stof: glad, kleurrijk en voordelig. Welke techniek past, hangt af van uw logo, de kleding en het aantal stuks. We adviseren u graag.</p>
+        <div><a class="meer" href="borduren-bedrukken.html">Bekijk de uitleg met tekeningen →</a></div></div>
+      <div class="illustratiekader">{doorsnede}</div>
+    </div>
     <div class="diensten">
       <article class="dienst">
         <div class="dienst__beeld">{stapbeeld("machine")}</div>
@@ -148,18 +152,6 @@ def home_body(branches, P, kleding, doorsnede, CTA, stapbeeld, tel_link):
       <li><h3>Levering</h3><p>U haalt de kleding op of wij sturen het naar u toe.</p></li>
     </ol>
     <div class="knoppen" style="margin-top:28px"><a class="knop knop--hoofd v2-knop-licht" href="samenstellen.html">Begin met samenstellen</a></div>
-  </div>
-</section>
-
-<section class="section section--compact" aria-labelledby="bb-kop">
-  <div class="wrap duo">
-    <div class="stack">
-      <span class="eyebrow">Borduren of bedrukken?</span>
-      <h2 id="bb-kop">In de stof of op de stof</h2>
-      <p class="intro">Borduren zit ín de stof: chique, met reliëf en het gaat jaren mee. Bedrukken ligt óp de stof: glad, kleurrijk en voordelig.</p>
-      <div><a class="meer" href="borduren-bedrukken.html">Bekijk de uitleg met tekeningen →</a></div>
-    </div>
-    <div class="illustratiekader">{doorsnede}</div>
   </div>
 </section>
 

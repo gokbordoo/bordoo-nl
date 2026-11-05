@@ -485,3 +485,7 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 
 .v2-knop-licht { background: var(--wit) !important; color: var(--bordeaux) !important; }
 .tag { display: inline-block; }
+.dienst-intro { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 48px); align-items: center; margin-bottom: 28px; }
+.dienst-intro .kop { margin-bottom: 0; }
+.dienst-intro > * { min-width: 0; }
+@media (max-width: 860px) { .dienst-intro { grid-template-columns: 1fr; } }
