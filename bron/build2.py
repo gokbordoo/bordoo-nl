@@ -2,7 +2,7 @@
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from garments import svg as kleding, G, TSHIRT, logo as oo, LIJN
-from samensteller import home_body
+from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
 from privacy import PRIVACY
@@ -584,7 +584,7 @@ bedankt = """<section class="hero hero--klein">
 </section>"""
 
 files = {
-    "index.html": ("Bordoo – Bedrijfskleding borduren en bedrukken", "Stel zelf uw kleding met logo samen: kies product, kleur en maten en upload uw logo. Bordoo borduurt en bedrukt bedrijfskleding voor elke branche.", home_body(B, P, kleding, doorsnede(), CTA), None),
+    "index.html": ("Bordoo – Bedrijfskleding borduren en bedrukken", "Stel zelf uw kleding met logo samen: kies product, kleur en maten en upload uw logo. Bordoo borduurt en bedrukt bedrijfskleding voor elke branche.", home_body(B, P, kleding, doorsnede(), CTA, stapbeeld, TEL), None),
     "samenstellen.html": ("Zelf samenstellen – Bordoo", "Kies een kledingstuk, kleur en maten, upload uw logo en zie direct een voorbeeld. Vraag daarna vrijblijvend een offerte aan.", samensteller_body(TEL, MAIL), None),
     "borduren-bedrukken.html": ("Borduren of bedrukken? – Bordoo", "Het verschil tussen borduren en bedrukken van kleding in beeld uitgelegd, met de gebruikelijke plekken en maten voor uw logo.", bb, None),
     "bedrijfskleding.html": ("Bedrijfskleding per branche – Bordoo", "Bedrijfskleding met logo voor elke branche: horeca, bouw, garage, schoonmaak, zorg, transport, kantoor en sport.", overzicht, None),

@@ -422,3 +422,66 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .toptel:hover { color: var(--bordeaux); }
 .topacties { gap: 18px; }
 @media (max-width: 1100px) { .toptel span { display: none; } .toptel { width: 40px; height: 40px; justify-content: center; border: 1px solid var(--lijn); border-radius: 50%; } }
+
+/* ===== BORDOO V2 – homepage ===== */
+.v2-hero { position: relative; overflow: hidden; color: var(--wit); padding-block: clamp(48px, 7vw, 88px);
+  background: radial-gradient(120% 140% at 85% 10%, #7A1C30 0%, var(--bordeaux) 38%, #3A0C17 72%, var(--zwart) 100%); }
+.v2-hero::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background: repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 2px, transparent 2px 14px); }
+.v2-hero .wrap { position: relative; z-index: 1; }
+.v2-hero__raster { display: grid; grid-template-columns: 1.35fr .65fr; gap: 48px; align-items: center; }
+.v2-hero__tekst { display: grid; gap: 20px; max-width: 660px; }
+.v2-hero h1 { font-size: clamp(32px, 4.6vw, 54px); }
+.v2-hero .eyebrow { color: var(--goud); }
+.v2-hero .intro { color: rgba(255,255,255,.84); }
+.v2-hero .knop--hoofd { background: var(--wit); color: var(--bordeaux); }
+.v2-hero .knop--hoofd:hover { background: var(--lichtgrijs); }
+.v2-hero__bel { font-size: 15px; color: rgba(255,255,255,.75); }
+.v2-hero__bel a { color: var(--wit); font-weight: 600; }
+.v2-teaser { display: grid; background: var(--wit); border-radius: var(--radius); overflow: hidden; text-decoration: none; color: var(--tekst);
+  max-width: 330px; width: 100%; justify-self: end; box-shadow: 0 18px 40px rgba(0,0,0,.35); outline: 2px solid transparent; transition: outline-color .15s; }
+.v2-teaser:hover { outline-color: var(--goud); }
+.v2-teaser__beeld { background: var(--lichtgrijs); display: grid; place-items: center; padding: 10px; }
+.v2-teaser__beeld svg { width: 82%; height: auto; }
+.v2-teaser__info { padding: 14px 18px 16px; display: grid; gap: 8px; }
+.v2-teaser__titel { font-weight: 600; font-size: 15px; }
+@media (max-width: 760px) { .v2-hero__raster { grid-template-columns: 1fr; } .v2-teaser { justify-self: start; grid-template-columns: 120px 1fr; max-width: 440px; } .v2-teaser__beeld svg { width: 100%; } }
+
+.diensten { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 20px; }
+.dienst { display: grid; grid-template-columns: 150px 1fr; gap: 22px; align-items: start; background: var(--lichtgrijs); border-radius: var(--radius); padding: 24px; }
+.dienst__beeld { background: var(--wit); border-radius: var(--radius); display: grid; place-items: center; aspect-ratio: 1; }
+.dienst__beeld svg { width: 82%; height: auto; }
+.dienst__tekst { display: grid; gap: 10px; align-content: start; }
+.dienst__tekst p { color: var(--tekst-zacht); }
+.dienst .vinklijst { font-size: 15px; gap: 6px; }
+@media (max-width: 480px) { .dienst { grid-template-columns: 1fr; } .dienst__beeld { max-width: 140px; } }
+
+.voorbeelden { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) { .voorbeelden { grid-template-columns: 1fr 1fr; } }
+.vb { margin: 0; background: var(--wit); border: 1px solid var(--lijn); border-radius: var(--radius); overflow: hidden; display: grid; grid-template-rows: auto 1fr; }
+.vb__beeld { aspect-ratio: 1; background: #ECE7E4; display: grid; place-items: center; overflow: hidden; }
+.vb__beeld svg { width: 100%; height: 100%; display: block; }
+.vb figcaption { padding: 14px 16px 16px; display: grid; gap: 4px; justify-items: start; }
+.vb figcaption strong { font-family: var(--display); font-size: 17px; margin-top: 4px; }
+.vb figcaption span:last-child { font-size: 14px; color: var(--tekst-zacht); }
+.vb__noot { margin-top: 14px; }
+
+.brkaarten { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+@media (max-width: 900px) { .brkaarten { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .brkaarten { grid-template-columns: 1fr; } }
+.brkaart { position: relative; display: grid; grid-template-columns: 112px 1fr; gap: 16px; align-items: center; background: var(--lichtgrijs); border: 1px solid transparent;
+  border-radius: var(--radius); padding: 12px 40px 12px 12px; color: var(--tekst); text-decoration: none; transition: border-color .15s, background .15s; }
+.brkaart:hover { border-color: var(--bordeaux); background: var(--wit); }
+.brkaart__beeld { position: relative; height: 92px; background: var(--wit); border-radius: 4px; overflow: hidden; }
+.brkaart__beeld svg { position: absolute; height: 84%; width: auto; top: 8%; }
+.brkaart__beeld svg.br-hoofd { left: 4%; z-index: 1; }
+.brkaart__beeld svg.br-bij { right: -6%; height: 66%; top: 26%; opacity: .95; }
+.brkaart__tekst { display: grid; gap: 3px; min-width: 0; }
+.brkaart__sub { font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--goud-tekst); }
+.brkaart h3 { font-size: 18px; }
+.brkaart p { font-size: 13.5px; color: var(--tekst-zacht); line-height: 1.4; }
+.brkaart__pijl { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--bordeaux); font-weight: 700; transition: transform .15s; }
+.brkaart:hover .brkaart__pijl { transform: translate(3px, -50%); }
+
+.v2-knop-licht { background: var(--wit) !important; color: var(--bordeaux) !important; }
+.tag { display: inline-block; }
