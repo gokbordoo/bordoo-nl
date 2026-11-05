@@ -6,7 +6,7 @@ from samensteller import mini
 
 def samensteller_body(tel, mail):
     knoppen = "".join(
-        f'<label class="ss-product"><input type="radio" name="product" value="{p[0]}"{" checked" if p[0] == "polo" else ""}>{mini(p[0])}<span>{p[1]}</span></label>'
+        f'<label class="ss-product"><input type="radio" name="product" value="{p[0]}"{" checked" if p[0] == "polo" else ""}><img src="img/samensteller/{p[0]}.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span>{p[1]}</span></label>'
         for p in PRODUCTEN)
     return f"""<section class="kopstrook">
   <div class="wrap">
@@ -39,6 +39,7 @@ def samensteller_body(tel, mail):
       <p class="verborgen"><label>Niet invullen: <input name="website"></label></p>
       <input type="hidden" name="kleur" id="h-kleur"><input type="hidden" name="logo_plekken" id="h-plekken">
       <input type="hidden" name="maten" id="h-maten"><input type="hidden" name="totaal" id="h-totaal">
+      <input type="hidden" name="aanvraag" id="h-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer"><input type="hidden" name="aantal_producten" id="h-aantalproducten">
 
       <fieldset class="ss-stap">
         <legend><span class="ss-nr">1</span> Kies een product</legend>
@@ -56,6 +57,11 @@ def samensteller_body(tel, mail):
           <label for="logo">Upload uw logo</label>
           <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps,.webp">
           <span class="hint" id="ss-logohint">PNG, JPG, SVG of PDF ziet u meteen in het voorbeeld. Een EPS-bestand nemen we mee in de aanvraag.</span>
+        </div>
+        <div class="veld">
+          <label for="logo_2">Tweede logo <span class="hint">(optioneel, bijv. een ander logo voor de rug)</span></label>
+          <input id="logo_2" name="logo_2" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps,.webp">
+          <span class="hint">Wordt meegestuurd met uw aanvraag. Samen met het eerste logo maximaal 8 MB.</span>
         </div>
         <div class="veld">
           <span class="veldlabel">Borduren of bedrukken?</span>
@@ -84,6 +90,11 @@ def samensteller_body(tel, mail):
         <p class="ss-fout" id="ss-fout" hidden>Vul bij minstens één maat een aantal in.</p>
       </fieldset>
 
+      <div class="ss-mandbalk">
+        <button type="button" class="knop knop--rand" id="ss-toevoegen">+ Toevoegen en nog een product kiezen</button>
+        <p class="hint" id="ss-mandmelding" aria-live="polite">Meer dan één soort kleding? Voeg dit product toe aan uw aanvraag en stel daarna het volgende samen.</p>
+      </div>
+
       <fieldset class="ss-stap">
         <legend><span class="ss-nr">6</span> Uw gegevens</legend>
         <div class="veld--rij">
@@ -98,7 +109,9 @@ def samensteller_body(tel, mail):
       </fieldset>
 
       <div class="ss-samenvatting">
-        <h3>Uw samenstelling</h3>
+        <h3>Uw aanvraag</h3>
+        <ol class="ss-mandlijst" id="ss-mandlijst"></ol>
+        <h4 class="ss-huidig-kop" id="ss-huidig-kop">Product dat u nu samenstelt</h4>
         <dl id="ss-overzicht"></dl>
         <label class="akkoord"><input type="checkbox" id="s-akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden, zoals beschreven in de <a href="privacy.html" target="_blank">privacyverklaring</a>. *</span></label>
         <button class="knop knop--hoofd" type="submit">Vraag offerte aan</button>
@@ -108,16 +121,22 @@ def samensteller_body(tel, mail):
   </div>
 </section>
 
+<script src="js/samensteller-data.js"></script>
 <script>
 (function () {{
-  var D = {json.dumps(data(), ensure_ascii=False)};
+  var D = window.BORDOO_DATA;
   var FOTOS = {json.dumps(FOTOS)};
   var VAN = {json.dumps(VAN_PRODUCT)};
   var MATEN = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
   var CM_PER_EENHEID = 1.4;
   var $ = function (id) {{ return document.getElementById(id); }};
   var form = $('ss-form'), svg = $('ss-svg');
-  var st = {{ p: null, kleur: null, plekken: [], actief: null, kant: 'voor', zoom: false, logo: null, logoNaam: null, aantallen: {{}} }};
+  var st = {{ p: null, kleur: null, plekken: [], actief: null, kant: 'voor', zoom: false, logo: null, logoNaam: null, aantallen: {{}}, mand: [] }};
+  var OPSLAG = 'bordoo-aanvraag';
+  try {{ st.mand = JSON.parse(localStorage.getItem(OPSLAG) || '[]') || []; }} catch (e) {{ st.mand = []; }}
+  function bewaar() {{ try {{ localStorage.setItem(OPSLAG, JSON.stringify(st.mand)); }} catch (e) {{}} }}
+  function esc(t) {{ return String(t).replace(/[&<>"]/g, function (c) {{ return {{ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }}[c]; }}); }}
+  function regelTekst(r) {{ return r.product + ' – ' + r.kleur + ' – ' + r.techniek + ' – logo: ' + (r.plekken || 'nog kiezen') + ' – ' + r.totaal + ' stuks' + (r.maten ? ' (' + r.maten + ')' : ''); }}
 
   function naad(hex) {{ var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
     return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.35)'; }}
@@ -234,8 +253,31 @@ def samensteller_body(tel, mail):
     $('h-kleur').value = D.kleuren[st.kleur].naam; $('h-plekken').value = plekken;
     $('h-maten').value = delen.join(', '); $('h-totaal').value = tot;
     if (tot) $('ss-fout').hidden = true;
+    st.huidig = {{ product: st.p.naam, kleur: D.kleuren[st.kleur].naam, techniek: techniek(), plekken: plekken, maten: st.p.maten === 'kleding' ? delen.join(', ') : '', totaal: tot }};
+    $('ss-mandlijst').innerHTML = st.mand.map(function (r, i) {{
+      return '<li><div><strong>' + esc(r.product) + '</strong> · ' + esc(r.kleur) + ' · ' + r.totaal + ' stuks<br><span>' + esc(r.techniek) + ', logo: ' + esc(r.plekken) + (r.maten ? ' · ' + esc(r.maten) : '') + '</span></div>' +
+        '<button type="button" class="pk-weg" data-mandweg="' + i + '" aria-label="' + esc(r.product) + ' uit de aanvraag halen">×</button></li>';
+    }}).join('');
+    $('ss-mandlijst').hidden = !st.mand.length; $('ss-huidig-kop').hidden = !st.mand.length;
+    var regels = st.mand.concat(tot ? [st.huidig] : []);
+    $('h-aanvraag').value = regels.map(function (r, i) {{ return (i + 1) + '. ' + regelTekst(r); }}).join('\\n');
+    $('h-aantalproducten').value = regels.length;
     return tot;
   }}
+
+  $('ss-toevoegen').addEventListener('click', function () {{
+    if (!st.plekken.length) {{ $('pk-fout').hidden = false; $('pk-figuren').scrollIntoView({{ block: 'center' }}); return; }}
+    if (!overzicht()) {{ $('ss-fout').hidden = false; $('ss-maten').scrollIntoView({{ block: 'center' }}); return; }}
+    st.mand.push(st.huidig); bewaar();
+    st.aantallen = {{}}; document.querySelectorAll('[data-maat]').forEach(function (i) {{ i.value = 0; }});
+    overzicht();
+    $('ss-mandmelding').textContent = st.huidig.product + ' is toegevoegd. Kies nu het volgende product, of verstuur uw aanvraag onderaan.';
+    document.querySelector('.ss-producten').scrollIntoView({{ block: 'start' }});
+  }});
+  $('ss-mandlijst').addEventListener('click', function (e) {{
+    var b = e.target.closest('[data-mandweg]'); if (!b) return;
+    st.mand.splice(+b.dataset.mandweg, 1); bewaar(); overzicht();
+  }});
 
   // ---------- events ----------
   form.addEventListener('change', function (e) {{
@@ -316,10 +358,12 @@ def samensteller_body(tel, mail):
   }}
 
   form.addEventListener('submit', function (e) {{
-    var fout = false;
-    if (!st.plekken.length) {{ $('pk-fout').hidden = false; fout = true; }}
-    if (!overzicht()) {{ $('ss-fout').hidden = false; fout = true; }}
-    if (fout) {{ e.preventDefault(); e.stopImmediatePropagation(); (st.plekken.length ? $('ss-maten') : $('pk-figuren')).scrollIntoView({{ block: 'center' }}); }}
+    var fout = false, tot = overzicht();
+    // een lege huidige samenstelling is goed als er al producten in de aanvraag staan
+    if (tot && !st.plekken.length) {{ $('pk-fout').hidden = false; fout = true; }}
+    if (!tot && !st.mand.length) {{ $('ss-fout').hidden = false; if (!st.plekken.length) $('pk-fout').hidden = false; fout = true; }}
+    if (fout) {{ e.preventDefault(); e.stopImmediatePropagation(); (st.plekken.length ? $('ss-maten') : $('pk-figuren')).scrollIntoView({{ block: 'center' }}); return; }}
+    try {{ localStorage.removeItem(OPSLAG); }} catch (x) {{}}
   }});
 
   var q = new URLSearchParams(location.search);
@@ -328,3 +372,21 @@ def samensteller_body(tel, mail):
   kiesProduct(start);
 }})();
 </script>"""
+
+
+
+def data_js():
+    """Inhoud van js/samensteller-data.js: producten, kleuren en tekeningen (door de browser bewaard)."""
+    return "window.BORDOO_DATA = " + json.dumps(data(), ensure_ascii=False) + ";\n"
+
+
+def product_svgs():
+    """Kleine productplaatjes voor de knoppen in stap 1, als losse bestanden (eerste kleur van elk product)."""
+    from samensteller import naadkleur
+    from config_garments import KLEUREN
+    uit = {}
+    for p in PRODUCTEN:
+        hexk = KLEUREN[p[4][0]][1]
+        uit[p[0]] = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+                     f'style="--stof:{hexk};--naad:{naadkleur(hexk)}">{p[2]}</svg>\n')
+    return uit

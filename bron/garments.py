@@ -78,11 +78,11 @@ G["handdoek"] = lambda: (p("M26 74 L94 74 L94 96 L26 96 Z", WIT) + p("M30 56 L90
 import realistisch as _R
 import itertools
 _TELLER = itertools.count(1)
-_KLEUR = {"zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bordeaux": "#5E1424", "wit": "#FAFAF8", "fluogeel": "#E3EA3A", "zand": "#D8CBB5"}
+_KLEUR = {"oranje": "#F26A1B", "zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bordeaux": "#5E1424", "wit": "#FAFAF8", "fluogeel": "#E3EA3A", "zand": "#D8CBB5"}
 _STIJL = {"tshirt": ("zwart", 68, 41), "polo": ("bordeaux", 68, 41), "overhemd": ("wit", 69, 35), "hoodie": ("antraciet", 60, 50),
-          "werkjas": ("marine", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
+          "werkjas": ("oranje", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
           "hesje": ("fluogeel", 64, 54), "koksbuis": ("wit", 73, 37), "schort": ("zwart", 60, 33), "koksbroek": ("zwart", None, None),
-          "werkbroek": ("antraciet", 44, 34), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
+          "werkbroek": ("antraciet", 44, 34), "korte_werkbroek": ("antraciet", 41, 58), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
           "tas": ("zand", 60, 74), "handdoek": ("bordeaux", 60, 46)}
 
 
@@ -98,3 +98,34 @@ def svg(naam, cls="kledingtekening"):
     mark = logo(x, y, BORDEAUX if _licht(hexk) else WIT, .8) if x else ""
     return (f'<svg class="{cls}" viewBox="0 0 120 120" aria-hidden="true" focusable="false" style="--stof:{hexk};--naad:{naadk}">'
             f'{_R.voorkant(naam).replace("rl-", f"rl{next(_TELLER)}-")}{mark}</svg>')
+
+
+# Kledingtekeningen als losse bestanden (V2): de browser laadt elk bestand één keer
+BESTANDEN_MAP = "img/kleding"
+
+
+def bestand_svg(naam):
+    """Inhoud van img/kleding/<naam>.svg: zelfde tekening als svg(), als zelfstandig bestand."""
+    kleur, x, y = _STIJL[naam]
+    hexk = _KLEUR[kleur]
+    naadk = "rgba(0,0,0,.35)" if _licht(hexk) else "rgba(255,255,255,.35)"
+    mark = logo(x, y, BORDEAUX if _licht(hexk) else WIT, .8) if x else ""
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+            f'style="--stof:{hexk};--naad:{naadk}">{_R.voorkant(naam)}{mark}</svg>\n')
+
+
+def img(naam, cls="kledingtekening"):
+    return f'<img class="{cls}" src="{BESTANDEN_MAP}/{naam}.svg" alt="" width="120" height="120" loading="lazy" decoding="async">'
+
+
+def bestand_svg_achter(naam):
+    """Achterkant (zonder logo) als los bestand, alleen voor kleding met een achterkant."""
+    kleur, _, _ = _STIJL[naam]
+    hexk = _KLEUR[kleur]
+    naadk = "rgba(0,0,0,.35)" if _licht(hexk) else "rgba(255,255,255,.35)"
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+            f'style="--stof:{hexk};--naad:{naadk}">{_R.achterkant(naam)}</svg>\n')
+
+
+def heeft_achterkant(naam):
+    return naam in _R.VOOR_ACHTER and _R.VOOR_ACHTER[naam]()[1] is not None

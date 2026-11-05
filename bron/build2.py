@@ -1,9 +1,14 @@
 """Bordoo-website v2: menu per branche met producten, pagina per branche, uitleg met tekeningen."""
 import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from garments import svg as kleding, G, TSHIRT, logo as oo, LIJN
-from samensteller import home_body
-from samensteller2 import samensteller_body
+from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, bestand_svg_achter, heeft_achterkant, _STIJL, BESTANDEN_MAP
+import config_garments as CG
+from branches_v2 import aanbevolen, cta_branche
+import keuzewijzer as KW
+import vertrouwen as VT
+import seo as SEO
+from home import home_body
+from samensteller2 import samensteller_body, data_js, product_svgs
 from config_garments import VAN_PRODUCT
 from privacy import PRIVACY
 
@@ -20,6 +25,7 @@ P = {
     "cap": ("Petten & caps", "cap", "Een geborduurd logo op de voorkant valt altijd op.", "B"),
     "werkjas": ("Werkjassen", "werkjas", "Warme, sterke jassen voor buiten. Logo op de borst en groot op de rug.", "BD"),
     "hesje": ("Veiligheidshesjes", "hesje", "Goed zichtbaar op de bouwplaats. Opdruk op de rug, zonder de reflectiestrepen te bedekken.", "D"),
+    "korte_werkbroek": ("Korte werkbroeken", "korte_werkbroek", "Voor warme dagen in de werkplaats of op de bouw. Met zakken voor gereedschap, klein logo op de pijp.", "BD"),
     "werkbroek": ("Werkbroeken", "werkbroek", "Met kniezakken en gereedschapszakken. Klein logo op de pijp of zak.", "BD"),
     "hoodie": ("Sweaters & hoodies", "hoodie", "Warm voor tussendoor. Logo op de borst, groot op de rug.", "BD"),
     "tshirt": ("T-shirts", "tshirt", "Voordelig in grote aantallen, ideaal voor de zomer en evenementen.", "BD"),
@@ -42,9 +48,9 @@ B = [
     ("horeca", "Horeca", "Horecakleding met uw logo", "Voor restaurants, cafés, hotels en catering. Van de keuken tot de bediening, iedereen herkenbaar.",
      "Keuken en bediening", "koksbuis", ["koksbuis", "schort", "koksbroek", "polo", "cap"]),
     ("bouw", "Bouw", "Bouwkleding met uw logo", "Voor aannemers, installateurs en schilders. Stevige kleding die tegen een stootje kan.",
-     "Aannemers en installateurs", "werkjas", ["werkjas", "hesje", "werkbroek", "hoodie", "tshirt"]),
+     "Aannemers en installateurs", "werkjas", ["werkjas", "hesje", "werkbroek", "korte_werkbroek", "hoodie", "tshirt"]),
     ("garage", "Garage & techniek", "Garage- en technische kleding met uw logo", "Voor autobedrijven, monteurs en de technische dienst. Praktisch in de werkplaats, netjes bij de klant.",
-     "Werkplaats en monteurs", "bodywarmer", ["bodywarmer", "softshell", "overall", "werkbroek", "polo"]),
+     "Werkplaats en monteurs", "bodywarmer", ["bodywarmer", "softshell", "overall", "werkbroek", "korte_werkbroek", "polo"]),
     ("schoonmaak", "Schoonmaak", "Schoonmaakkleding met uw logo", "Voor schoonmaak- en facilitaire bedrijven. Uw medewerkers zijn bij de klant meteen herkenbaar.",
      "Schoonmaak en facilitair", "fleece", ["polo", "fleece", "werkbroek", "softshell"]),
     ("zorg", "Zorg & beauty", "Zorg- en salonkleding met uw logo", "Voor thuiszorg, praktijken, kappers en schoonheidssalons. Fris, verzorgd en makkelijk te wassen.",
@@ -90,6 +96,38 @@ def mobielmenu():
     return "\n".join(out)
 
 
+NAMEN = {"bedrijfskleding.html": "Alle branches", "borduren-bedrukken.html": "Borduren &amp; bedrukken", "samenstellen.html": "Zelf samenstellen",
+         "offerte.html": "Offerte &amp; contact", "privacy.html": "Privacyverklaring", "bedankt.html": "Bedankt",
+         "over-bordoo.html": "Over Bordoo", "werkwijze.html": "Werkwijze", "veelgestelde-vragen.html": "Veelgestelde vragen", "404.html": "Pagina niet gevonden"}
+
+
+def kruimelstappen(fn, branche):
+    stappen = [("index.html", "Home")]
+    if branche:
+        stappen += [("bedrijfskleding.html", "Alle branches"), (fn, next(b[1] for b in B if b[0] == branche))]
+    else:
+        stappen.append((fn, NAMEN.get(fn, "")))
+    return stappen
+
+
+def structured(fn, branche):
+    data = [SEO.organisatie("+31648399904", MAIL)] if fn == "index.html" else []
+    if fn not in ("index.html", "404.html", "bedankt.html"):
+        data.append(SEO.kruimel_data(kruimelstappen(fn, branche)))
+    if fn == "veelgestelde-vragen.html":
+        data.append(SEO.faq_data(VT.FAQ))
+    return data
+
+
+def kruimelpad(fn, branche):
+    """Kruimelpad onder de kop (niet op de homepage)."""
+    if fn == "index.html":
+        return ""
+    stappen = kruimelstappen(fn, branche)
+    items = "".join(f'<li><a href="{f}">{n}</a></li>' for f, n in stappen[:-1]) + f'<li aria-current="page">{stappen[-1][1]}</li>'
+    return f'<nav class="kruimel" aria-label="Kruimelpad"><ol class="wrap">{items}</ol></nav>\n'
+
+
 def page(fn, title, desc, body, branche=None):
     def cur(f):
         return ' aria-current="page"' if f == fn else ""
@@ -101,11 +139,12 @@ def page(fn, title, desc, body, branche=None):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+{SEO.kop_extra(fn, title, desc, structured(fn, branche))}<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icoon.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+<a class="skiplink" href="#inhoud">Naar de inhoud</a>
 <header class="header">
   <div class="wrap topbalk">
     <nav class="toplinks" aria-label="Informatie">
@@ -115,7 +154,7 @@ def page(fn, title, desc, body, branche=None):
     </nav>
     <a class="logo" href="index.html" aria-label="Bordoo – naar de homepage"><img src="img/logo-tekst.svg" alt="Bordoo – borduur &amp; druk" width="170" height="70"></a>
     <div class="topacties">
-      <a class="toptel" href="tel:+31648399904" aria-label="Bel Bordoo: +31 6 48 39 99 04"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><span>+31 6 48 39 99 04</span></a>
+      <a class="toptel" href="tel:+31648399904" aria-label="Bel Bordoo: +31 6 48 39 99 04" title="Bel ons: +31 6 48 39 99 04"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.6a1 1 0 0 1-.25 1z"/></svg><span>+31 6 48 39 99 04</span></a>
       <a class="knop knop--hoofd knop--klein" href="offerte.html"{cur("offerte.html")}>Offerte aanvragen</a>
       <button class="menuknop" type="button" aria-expanded="false" aria-controls="mobielmenu">Menu</button>
     </div>
@@ -133,12 +172,15 @@ def page(fn, title, desc, body, branche=None):
       <a class="mobiel-link" href="borduren-bedrukken.html">Borduren &amp; bedrukken</a>
       <a class="mobiel-link" href="bedrijfskleding.html">Alle branches</a>
       <a class="mobiel-link" href="offerte.html">Offerte &amp; contact</a>
+      <a class="mobiel-link" href="werkwijze.html">Werkwijze</a>
+      <a class="mobiel-link" href="veelgestelde-vragen.html">Veelgestelde vragen</a>
+      <a class="mobiel-link" href="over-bordoo.html">Over Bordoo</a>
       <a class="mobiel-link" href="tel:+31648399904">Bel ons: +31 6 48 39 99 04</a>
     </div>
   </nav>
 </header>
-<main>
-{body}
+<main id="inhoud">
+{kruimelpad(fn, branche)}{body}
 </main>
 <footer class="footer">
   <div class="wrap">
@@ -154,24 +196,65 @@ def page(fn, title, desc, body, branche=None):
       <div>
         <h3>Bordoo</h3>
         <ul>
-          <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
           <li><a href="samenstellen.html">Zelf samenstellen</a></li>
           <li><a href="offerte.html">Offerte aanvragen</a></li>
-          <li><a href="privacy.html">Privacyverklaring</a></li>
-          <li><a href="mailto:{MAIL}">{MAIL}</a></li>
+          <li><a href="borduren-bedrukken.html">Borduren &amp; bedrukken</a></li>
+          <li><a href="werkwijze.html">Werkwijze</a></li>
+          <li><a href="veelgestelde-vragen.html">Veelgestelde vragen</a></li>
+          <li><a href="over-bordoo.html">Over Bordoo</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contact</h3>
+        <ul>
           <li>{TEL}</li>
+          <li><a href="mailto:{MAIL}">{MAIL}</a></li>
+          <li><a href="offerte.html">Contactformulier</a></li>
         </ul>
       </div>
     </div>
     <div class="footer__onder">
       <span>© 2026 Bordoo</span>
-      <span>bordoo.nl</span>
+      <span><a href="privacy.html">Privacyverklaring</a> · bordoo.nl</span>
     </div>
   </div>
 </footer>
 <script>
+  (function () {{
+    var MAX = 8 * 1024 * 1024;
+    function nummer() {{
+      var d = new Date(), t = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = '';
+      for (var i = 0; i < 4; i++) r += t.charAt(Math.floor(Math.random() * t.length));
+      return 'BRD-' + String(d.getFullYear()).slice(2) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + r;
+    }}
+    document.querySelectorAll('form[data-netlify]').forEach(function (f) {{
+      f.addEventListener('submit', function (e) {{
+        if (e.defaultPrevented) return;
+        var totaal = 0;
+        f.querySelectorAll('input[type=file]').forEach(function (i) {{ if (i.files[0]) totaal += i.files[0].size; }});
+        var melding = f.querySelector('.js-bestandsfout');
+        if (totaal > MAX) {{
+          e.preventDefault();
+          if (!melding) {{ melding = document.createElement('p'); melding.className = 'ss-fout js-bestandsfout'; f.querySelector('button[type=submit]').insertAdjacentElement('beforebegin', melding); }}
+          melding.textContent = 'Uw bestanden zijn samen ' + (totaal / 1048576).toFixed(1) + ' MB. Dat is te groot (maximaal 8 MB). Kies een kleiner bestand of stuur uw logo daarna per mail naar info@bordoo.nl.';
+          melding.scrollIntoView({{ block: 'center' }}); return;
+        }}
+        var nr = nummer();
+        f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) {{ h.value = nr; }});
+        var veld = function (n) {{ var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; }};
+        try {{ sessionStorage.setItem('bordoo-verzonden', JSON.stringify({{ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') }})); }} catch (x) {{}}
+      }});
+    }});
+  }})();
   var k = document.querySelector('.menuknop'), m = document.getElementById('mobielmenu');
   k.addEventListener('click', function () {{ var o = m.classList.toggle('open'); k.setAttribute('aria-expanded', o); k.textContent = o ? 'Sluiten' : 'Menu'; }});
+  document.addEventListener('keydown', function (e) {{
+    if (e.key !== 'Escape') return;
+    var d = document.activeElement && document.activeElement.closest('.drop');
+    if (d) {{ d.querySelector('.drop__kop').focus(); d.classList.add('dicht'); }}
+    if (m.classList.contains('open')) {{ m.classList.remove('open'); k.setAttribute('aria-expanded', false); k.textContent = 'Menu'; k.focus(); }}
+  }});
+  document.querySelectorAll('.drop').forEach(function (d) {{ d.addEventListener('mouseleave', function () {{ d.classList.remove('dicht'); }}); d.addEventListener('focusout', function (e) {{ if (!d.contains(e.relatedTarget)) d.classList.remove('dicht'); }}); }});
 </script>
 </body>
 </html>
@@ -350,6 +433,8 @@ bb = f"""<section class="hero hero--klein">
   </div>
 </section>
 
+{KW.keuzewijzer()}
+
 <section class="section section--wit">
   <div class="wrap">
     <div class="kop">
@@ -360,6 +445,8 @@ bb = f"""<section class="hero hero--klein">
     <div class="illustratiekader illustratiekader--breed">{doorsnede()}</div>
   </div>
 </section>
+
+{KW.voorbeelden()}
 
 <section class="section" id="borduren">
   <div class="wrap">
@@ -432,6 +519,8 @@ bb = f"""<section class="hero hero--klein">
   </div>
 </section>
 
+{KW.per_product(P, kleding)}
+
 {CTA}"""
 
 overzicht = f"""<section class="hero hero--klein">
@@ -464,13 +553,45 @@ overzicht = f"""<section class="hero hero--klein">
 {CTA}"""
 
 
+def productinfo(pk):
+    """Kleuren, maten en logoplekken uit de samensteller, zodat beide altijd hetzelfde tonen."""
+    cid = VAN_PRODUCT.get(pk)
+    prod = next((p for p in CG.PRODUCTEN if p[0] == cid), None)
+    if not prod:
+        return ""
+    kleuren = "".join(f'<span class="kleurstip" style="background:{CG.KLEUREN[k][1]}" title="{CG.KLEUREN[k][0]}"></span>' for k in prod[4])
+    namen = ", ".join(CG.KLEUREN[k][0].lower() for k in prod[4])
+    maten = "XS t/m 3XL" if prod[6] == "kleding" else "Eén maat"
+    plekken = []
+    for q in prod[5]:
+        n = q[1].split(" (")[0]
+        n = "Borst" if n.startswith("Borst") else "Mouw" if n.startswith("Mouw") else n
+        if n not in plekken:
+            plekken.append(n)
+    return f'''<dl class="productinfo">
+          <div><dt>Kleuren</dt><dd><span class="kleurstippen" role="img" aria-label="{namen}">{kleuren}</span></dd></div>
+          <div><dt>Maten</dt><dd>{maten}</dd></div>
+          <div><dt>Logo op</dt><dd>{" · ".join(plekken)}</dd></div>
+        </dl>'''
+
+
+def productbeeld(pk):
+    naam = P[pk][1]
+    if heeft_achterkant(naam):
+        return (f'<div class="product__beeld heeft-achter">{kleding(naam)}'
+                f'<img class="achterkant" src="{BESTANDEN_MAP}/{naam}-achter.svg" alt="" width="120" height="120" loading="lazy" decoding="async">'
+                f'<span class="product__kant" aria-hidden="true">Voor · Achter</span></div>')
+    return f'<div class="product__beeld">{kleding(naam)}</div>'
+
+
 def branchepagina(k, menu, titel, intro, tegel, icon, prods):
     kaarten = "".join(f'''<article class="product" id="{pk}">
-      <div class="product__beeld">{kleding(P[pk][1])}</div>
+      {productbeeld(pk)}
       <div class="product__tekst">
         <h3>{P[pk][0]}</h3>
         <p>{P[pk][2]}</p>
         <div class="tags">{tags(P[pk][3])}</div>
+        {productinfo(pk)}
         <div class="product__links">{f'<a class="knop knop--hoofd knop--klein" href="samenstellen.html?product={pk}">Stel samen</a>' if pk in VAN_PRODUCT else ''}<a class="meer" href="offerte.html?branche={k}&amp;product={pk}">Offerte aanvragen →</a></div>
       </div>
     </article>''' for pk in prods)
@@ -497,8 +618,9 @@ def branchepagina(k, menu, titel, intro, tegel, icon, prods):
     <p class="hint" style="margin-top:20px">Afbeeldingen zijn tekeningen ter illustratie. Merk, model en kleur kiest u samen met ons bij de offerte.</p>
   </div>
 </section>
-{CTA}
-<section class="section section--wit">
+{aanbevolen(k, menu, P, kleding)}
+{cta_branche(k, menu)}
+<section class="section section--compact">
   <div class="wrap andere">
     <span class="eyebrow">Andere branches</span>
     <div class="andere__links">{andere}</div>
@@ -531,10 +653,22 @@ off = f"""<section class="hero hero--klein">
         <div class="veld"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
         <div class="veld"><label for="telefoon">Telefoon</label><input id="telefoon" name="telefoon" type="tel" autocomplete="tel"></div>
       </div>
+      <input type="hidden" name="aanvraag" id="o-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer">
       <div class="veld--rij">
         <div class="veld"><label for="branche">Branche</label><select id="branche" name="branche"><option value="">Kies uw branche</option>{opties_branche}<option value="anders">Anders</option></select></div>
-        <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option>{opties_product}<option value="anders">Anders / meerdere</option></select></div>
+        <div class="veld"><label for="datum">Wanneer nodig?</label><input id="datum" name="datum" type="date"></div>
       </div>
+      <fieldset class="regels">
+        <legend>Welke kleding?</legend>
+        <div class="regels__lijst" id="regels">
+          <div class="regel">
+            <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option>{opties_product}<option value="anders">Anders / meerdere</option></select></div>
+            <div class="veld regel__aantal"><label for="aantal">Aantal</label><input id="aantal" name="aantal" type="number" min="1" inputmode="numeric" placeholder="bijv. 25"></div>
+            <div class="veld"><label for="maten">Maten <span class="hint">(optioneel)</span></label><input id="maten" name="maten" type="text" placeholder="bijv. 5×M, 10×L, 10×XL"></div>
+          </div>
+        </div>
+        <button type="button" class="knop knop--rand knop--klein" id="regel-erbij">+ Nog een product</button>
+      </fieldset>
       <fieldset>
         <legend>Borduren of bedrukken? *</legend>
         <div class="keuzes">
@@ -544,14 +678,16 @@ off = f"""<section class="hero hero--klein">
         </div>
       </fieldset>
       <div class="veld--rij">
-        <div class="veld"><label for="aantal">Aantal stuks</label><input id="aantal" name="aantal" type="number" min="1" inputmode="numeric" placeholder="bijv. 25"></div>
-        <div class="veld"><label for="datum">Wanneer nodig?</label><input id="datum" name="datum" type="date"></div>
+        <div class="veld">
+          <label for="logo">Uw logo of ontwerp</label>
+          <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
+        </div>
+        <div class="veld">
+          <label for="logo_2">Tweede logo <span class="hint">(optioneel, bijv. voor de rug)</span></label>
+          <input id="logo_2" name="logo_2" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
+        </div>
       </div>
-      <div class="veld">
-        <label for="logo">Uw logo of ontwerp</label>
-        <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
-        <span class="hint">Liefst als PDF, SVG of AI. Een PNG of JPG mag ook.</span>
-      </div>
+      <p class="hint">Liefst als PDF, SVG of AI. Een PNG of JPG mag ook. Samen maximaal 8 MB.</p>
       <div class="veld"><label for="bericht">Toelichting</label><textarea id="bericht" name="bericht" placeholder="Bijv. kleur van de kleding, maten, plek van het logo (borst, rug, mouw)"></textarea></div>
       <label class="akkoord"><input type="checkbox" id="akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden, zoals beschreven in de <a href="privacy.html" target="_blank">privacyverklaring</a>. *</span></label>
       <div><button class="knop knop--hoofd" type="submit">Verstuur aanvraag</button></div>
@@ -562,6 +698,7 @@ off = f"""<section class="hero hero--klein">
       <div class="contactregel"><span>Telefoon / WhatsApp</span>{TEL}</div>
       <hr class="goudlijn">
       <p class="hint">Particulier? Ook voor één kledingstuk met een naam of tekst kunt u ons een bericht sturen.</p>
+      <a class="meer" href="veelgestelde-vragen.html">Bekijk de veelgestelde vragen →</a>
     </aside>
   </div>
 </section>
@@ -569,6 +706,26 @@ off = f"""<section class="hero hero--klein">
   (function () {{
     var q = new URLSearchParams(location.search);
     ['branche', 'product'].forEach(function (n) {{ var v = q.get(n), s = document.getElementById(n); if (v && s.querySelector('option[value="' + v + '"]')) s.value = v; }});
+    var lijst = document.getElementById('regels'), eerste = lijst.querySelector('.regel'), n = 1;
+    document.getElementById('regel-erbij').addEventListener('click', function () {{
+      n++;
+      var r = eerste.cloneNode(true);
+      r.querySelectorAll('[id]').forEach(function (el) {{ el.id = el.id + '-' + n; el.removeAttribute('name'); if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; }});
+      r.querySelectorAll('label[for]').forEach(function (l) {{ l.setAttribute('for', l.getAttribute('for') + '-' + n); }});
+      var weg = document.createElement('button'); weg.type = 'button'; weg.className = 'pk-weg regel__weg'; weg.setAttribute('aria-label', 'Product verwijderen'); weg.textContent = '×';
+      weg.addEventListener('click', function () {{ r.remove(); }});
+      r.appendChild(weg); lijst.appendChild(r); r.querySelector('select').focus();
+    }});
+    // alle productregels samenvatten in het veld "aanvraag" (vóór de algemene verzendcode)
+    document.querySelector('form[name="offerte"]').addEventListener('submit', function () {{
+      var regels = [];
+      lijst.querySelectorAll('.regel').forEach(function (r) {{
+        var sel = r.querySelector('select'), a = r.querySelector('input[type=number]').value, m = r.querySelector('input[type=text]').value;
+        if (!sel.value && !a) return;
+        regels.push((regels.length + 1) + '. ' + (sel.value ? sel.options[sel.selectedIndex].text : 'Product nog niet gekozen') + (a ? ' – ' + a + ' stuks' : '') + (m ? ' – maten: ' + m : ''));
+      }});
+      document.getElementById('o-aanvraag').value = regels.join('\\n');
+    }});
   }})();
 </script>"""
 
@@ -578,13 +735,46 @@ bedankt = """<section class="hero hero--klein">
       <span class="eyebrow">Aanvraag ontvangen</span>
       <h1>Bedankt voor uw aanvraag</h1>
       <p class="intro">We hebben uw aanvraag ontvangen en nemen zo snel mogelijk contact met u op, meestal binnen twee werkdagen.</p>
-      <div class="knoppen"><a class="knop knop--goud" href="index.html">Terug naar de homepage</a></div>
     </div>
   </div>
-</section>"""
+</section>
+<section class="section section--compact">
+  <div class="wrap bevestiging">
+    <div class="bevestiging__kaart" id="bevestiging" hidden>
+      <span class="kw__label">Uw aanvraagnummer</span>
+      <strong class="bevestiging__nr" id="b-nr"></strong>
+      <p class="hint">Noem dit nummer als u contact met ons opneemt.</p>
+      <div id="b-regels-blok" hidden><h2>Uw aanvraag</h2><ol class="bevestiging__regels" id="b-regels"></ol></div>
+      <p class="hint" id="b-email"></p>
+    </div>
+    <div class="bevestiging__stappen">
+      <h2>Wat gebeurt er nu?</h2>
+      <ol class="stappen-lijst">
+        <li><strong>We bekijken uw aanvraag</strong> en uw logo.</li>
+        <li><strong>U ontvangt een voorstel</strong> met prijs en een voorbeeld van hoe het logo op de kleding komt.</li>
+        <li><strong>Na uw akkoord</strong> borduren of bedrukken wij de kleding.</li>
+      </ol>
+      <div class="knoppen"><a class="knop knop--rand" href="index.html">Terug naar de homepage</a></div>
+    </div>
+  </div>
+</section>
+<script>
+  (function () {
+    var d; try { d = JSON.parse(sessionStorage.getItem('bordoo-verzonden') || 'null'); } catch (e) { d = null; }
+    if (!d || !d.nr) return;
+    document.getElementById('b-nr').textContent = d.nr;
+    if (d.aanvraag) {
+      var ol = document.getElementById('b-regels');
+      d.aanvraag.split('\\n').forEach(function (r) { var li = document.createElement('li'); li.textContent = r.replace(/^\\d+\\.\\s*/, ''); ol.appendChild(li); });
+      document.getElementById('b-regels-blok').hidden = false;
+    }
+    if (d.email) document.getElementById('b-email').textContent = 'We reageren op ' + d.email + '.';
+    document.getElementById('bevestiging').hidden = false;
+  })();
+</script>"""
 
 files = {
-    "index.html": ("Bordoo – Bedrijfskleding borduren en bedrukken", "Stel zelf uw kleding met logo samen: kies product, kleur en maten en upload uw logo. Bordoo borduurt en bedrukt bedrijfskleding voor elke branche.", home_body(B, P, kleding, doorsnede(), CTA), None),
+    "index.html": ("Bordoo – Bedrijfskleding borduren en bedrukken", "Stel zelf uw kleding met logo samen: kies product, kleur en maten en upload uw logo. Bordoo borduurt en bedrukt bedrijfskleding voor elke branche.", home_body(B, P, kleding, doorsnede(), CTA, stapbeeld, TEL), None),
     "samenstellen.html": ("Zelf samenstellen – Bordoo", "Kies een kledingstuk, kleur en maten, upload uw logo en zie direct een voorbeeld. Vraag daarna vrijblijvend een offerte aan.", samensteller_body(TEL, MAIL), None),
     "borduren-bedrukken.html": ("Borduren of bedrukken? – Bordoo", "Het verschil tussen borduren en bedrukken van kleding in beeld uitgelegd, met de gebruikelijke plekken en maten voor uw logo.", bb, None),
     "bedrijfskleding.html": ("Bedrijfskleding per branche – Bordoo", "Bedrijfskleding met logo voor elke branche: horeca, bouw, garage, schoonmaak, zorg, transport, kantoor en sport.", overzicht, None),
@@ -594,6 +784,27 @@ files = {
 }
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])
+(OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
+files.update({
+    "over-bordoo.html": ("Over Bordoo – borduren en bedrukken van bedrijfskleding", "Bordoo borduurt en bedrukt bedrijfskleding met uw logo. Persoonlijk contact, eerlijk advies en eerst een voorbeeld.", VT.over(TEL, MAIL, CTA), None),
+    "werkwijze.html": ("Werkwijze – Bordoo", "Zo werkt Bordoo: van aanvraag en voorstel tot productie en levering van uw kleding met logo.", VT.werkwijze(CTA), None),
+    "veelgestelde-vragen.html": ("Veelgestelde vragen – Bordoo", "Antwoorden over prijzen, aantallen, logobestanden, borduren of bedrukken, levering en wassen.", VT.faq(CTA), None),
+    "404.html": ("Pagina niet gevonden – Bordoo", "Deze pagina bestaat niet (meer).", VT.niet_gevonden(), None),
+})
+for naam in _STIJL:
+    (OUT / BESTANDEN_MAP / f"{naam}.svg").write_text(bestand_svg(naam), encoding="utf-8")
+    if heeft_achterkant(naam):
+        (OUT / BESTANDEN_MAP / f"{naam}-achter.svg").write_text(bestand_svg_achter(naam), encoding="utf-8")
+(OUT / "sitemap.xml").write_text(SEO.sitemap(files), encoding="utf-8")
+(OUT / "js").mkdir(exist_ok=True)
+(OUT / "js" / "samensteller-data.js").write_text(data_js(), encoding="utf-8")
+(OUT / "img" / "samensteller").mkdir(parents=True, exist_ok=True)
+for pid, inhoud in product_svgs().items():
+    (OUT / "img" / "samensteller" / f"{pid}.svg").write_text(inhoud, encoding="utf-8")
+(OUT / "robots.txt").write_text(SEO.ROBOTS, encoding="utf-8")
 for fn, (title, desc, body, br) in files.items():
-    (OUT / fn).write_text(page(fn, title, desc, body, br), encoding="utf-8")
+    html = page(fn, title, desc, body, br)
+    if fn == "404.html":
+        html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<base href="/">', 1)
+    (OUT / fn).write_text(html, encoding="utf-8")
 print("ok", len(files))

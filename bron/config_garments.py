@@ -41,7 +41,7 @@ PRODUCTEN = [
     ("softshell", "Softshell jas", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M44 66 L52 80 M76 66 L68 80"), body(LANG) + ACHTER_KRAAG,
      JAS, JAS_POS, "kleding"),
     ("werkjas", "Werkjas", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M44 46 L56 46 L56 58 L44 58 Z M64 46 L76 46 L76 58 L64 58 Z")
-     + ln("M40 84 L80 84", 3, "#A9A3A4"), body(LANG) + ACHTER_KRAAG + ln("M40 84 L80 84", 3, "#A9A3A4"), ["zwart", "antraciet", "marine", "rood", "kobalt"], JAS_POS, "kleding"),
+     + ln("M40 84 L80 84", 3, "#A9A3A4"), body(LANG) + ACHTER_KRAAG + ln("M40 84 L80 84", 3, "#A9A3A4"), ["fluooranje", "zwart", "antraciet", "marine", "rood", "kobalt"], JAS_POS, "kleding"),
     ("bodywarmer", "Bodywarmer", body(VEST) + KRAAG_RITS + ln("M60 18 L60 100") + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)),
      body(VEST) + ACHTER_KRAAG + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)), JAS, VEST_POS, "kleding"),
     ("fleece", "Fleecevest", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M40 96 L80 96"), body(LANG) + ACHTER_KRAAG + ln("M40 96 L80 96"),
@@ -75,7 +75,7 @@ KLEUREN = {
 }
 
 # welk configuratorproduct hoort bij een product uit het branchemenu
-VAN_PRODUCT = {"koksbuis": "koksbuis", "schort": "schort", "polo": "polo", "cap": "cap", "werkjas": "werkjas", "hesje": "hesje", "hoodie": "hoodie",
+VAN_PRODUCT = {"werkbroek": "werkbroek", "korte_werkbroek": "korte_werkbroek", "overall": "overall", "koksbuis": "koksbuis", "schort": "schort", "polo": "polo", "cap": "cap", "werkjas": "werkjas", "hesje": "hesje", "hoodie": "hoodie",
                "tshirt": "tshirt", "bodywarmer": "bodywarmer", "softshell": "softshell", "fleece": "fleece", "tuniek": "tuniek", "kapschort": "schort",
                "overhemd": "overhemd", "trui": "sweater", "sportshirt": "tshirt", "trainingsjas": "fleece", "tas": "tas"}
 
@@ -132,6 +132,18 @@ _POS = {
     "cap": [_p("voorkant", "Voorkant", "voor", 46, 57, (5, 10, 7))],
     "tas": [_p("midden", "Midden", "voor", 60, 73, (10, 25, 15))],
 }
+BROEK_KLEUREN = ["zwart", "antraciet", "marine", "grijs"]
+PRODUCTEN += [
+    ("werkbroek", "Werkbroek", _R.voorkant("werkbroek"), _R.achterkant("werkbroek"), BROEK_KLEUREN, [], "kleding"),
+    ("korte_werkbroek", "Korte werkbroek", _R.voorkant("korte_werkbroek"), _R.achterkant("korte_werkbroek"), BROEK_KLEUREN, [], "kleding"),
+    ("overall", "Overall", _R.voorkant("overall"), _R.achterkant("overall"), ["marine", "zwart", "antraciet", "rood", "kobalt"], [], "kleding"),
+]
+_POS.update({
+    "werkbroek": [_p("pijp-links", "Pijp links", "voor", 44, 34, (5, 10, 7)), _p("zak", "Beenzak", "voor", 44.7, 69, (5, 9, 6)),
+                  _p("achterzak", "Achterzak", "achter", 72, 34, (5, 9, 6))],
+    "korte_werkbroek": [_p("pijp-links", "Pijp links", "voor", 41, 58, (5, 9, 6)), _p("achterzak", "Achterzak", "achter", 73, 50, (5, 9, 6))],
+    "overall": [_p("borst", "Borst", "voor", 60, 27, (6, 12, 9)), _p("rug", "Rug (bovenaan)", "achter", 60, 30, (10, 18, 15))],
+})
 PRODUCTEN = [(i, n, v, a, k, _POS.get(i, pos), m) for (i, n, v, a, k, pos, m) in PRODUCTEN]
 
 # ---------- Productfoto's (vervangen de tekening als er een foto is) ----------
