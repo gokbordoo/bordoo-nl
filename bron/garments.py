@@ -82,7 +82,7 @@ _KLEUR = {"zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bord
 _STIJL = {"tshirt": ("zwart", 68, 41), "polo": ("bordeaux", 68, 41), "overhemd": ("wit", 69, 35), "hoodie": ("antraciet", 60, 50),
           "werkjas": ("marine", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
           "hesje": ("fluogeel", 64, 54), "koksbuis": ("wit", 73, 37), "schort": ("zwart", 60, 33), "koksbroek": ("zwart", None, None),
-          "werkbroek": ("antraciet", 44, 34), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
+          "werkbroek": ("antraciet", 44, 34), "korte_werkbroek": ("antraciet", 41, 58), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
           "tas": ("zand", 60, 74), "handdoek": ("bordeaux", 60, 46)}
 
 

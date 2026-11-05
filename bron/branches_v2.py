@@ -11,7 +11,7 @@ PAKKETTEN = {
     "bouw": ([("Op de bouwplaats", "Zichtbaar, warm en tegen een stootje bestand.", ["werkjas", "hesje", "werkbroek"]),
               ("Werkplaats en kantoor", "Comfortabel voor binnen, met uw logo.", ["tshirt", "hoodie"])],
              "Op veiligheidshesjes komt het logo zo dat de reflectiestrepen vrij blijven."),
-    "garage": ([("Werkplaats", "Praktisch en bestand tegen vuil werk.", ["overall", "werkbroek", "bodywarmer"]),
+    "garage": ([("Werkplaats", "Praktisch en bestand tegen vuil werk.", ["overall", "werkbroek", "korte_werkbroek", "bodywarmer"]),
                 ("Balie en klantcontact", "Netjes en representatief.", ["polo", "softshell"])],
                "In de werkplaats vallen vlekken minder op bij donkere kleuren, zoals zwart, antraciet of marine."),
     "schoonmaak": ([("Op locatie", "Herkenbaar bij de klant, comfortabel tijdens het werk.", ["polo", "werkbroek", "fleece"]),

@@ -268,9 +268,23 @@ def handdoek():
     return DEFS + laag(76, 22, "#FAF8F6") + laag(56, 20, "#D8CBB5") + laag(36, 20, "var(--stof)")
 
 
+KORT = ("M37 32 L83 32 L85.5 82 Q85.6 85 83 85 L66.5 85 Q64.6 85 64.4 83 L60.6 58 L59.4 58 L55.6 83 Q55.4 85 53.5 85 "
+        "L37 85 Q34.4 85 34.5 82 Z")
+
+
+def korte_werkbroek():
+    out = DEFS + lichaam(KORT) + naad("M37 38 L83 38", .9) + naad("M60 38 L60 56", .9) + stiksel("M37.4 36.2 L82.6 36.2")
+    out += plooien("M44 44 Q43 62 45 80", "M76 44 Q77 62 75 80")
+    out += deel("M73.5 50 L84.2 50 L84.9 70 L74.2 70 Z", stiksel("M74 52.4 L84.4 52.4"))   # zijzak met klep
+    out += deel("M35.3 50 L45.8 50 L45.3 66 L34.8 66 Z", stiksel("M35.6 52.4 L45.6 52.4"))  # beenzak
+    out += stiksel("M35.2 81.4 L54.6 81.4") + stiksel("M65.4 81.4 L84.8 81.4")              # zomen
+    out += naad("M40 38 L40 33 M48 38 L48 33 M72 38 L72 33 M80 38 L80 33", .8)              # lusjes
+    return out
+
+
 VOOR_ACHTER = {"polo": polo, "tshirt": tshirt, "sweater": sweater, "hoodie": hoodie, "softshell": softshell, "fleece": fleece, "werkjas": werkjas,
                "bodywarmer": bodywarmer, "hesje": hesje, "koksbuis": koksbuis, "overhemd": overhemd, "tuniek": tuniek, "schort": schort, "cap": cap, "tas": tas}
-ALLEEN = {"werkbroek": lambda: broek(kniestukken=True), "koksbroek": lambda: broek(ruit=True), "overall": overall, "handdoek": handdoek}
+ALLEEN = {"korte_werkbroek": korte_werkbroek, "werkbroek": lambda: broek(kniestukken=True), "koksbroek": lambda: broek(ruit=True), "overall": overall, "handdoek": handdoek}
 
 
 def voorkant(naam):
