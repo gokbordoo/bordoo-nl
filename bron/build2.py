@@ -4,6 +4,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, bestand_svg_achter, heeft_achterkant, _STIJL, BESTANDEN_MAP
 import config_garments as CG
 from branches_v2 import aanbevolen, cta_branche
+import keuzewijzer as KW
 from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
@@ -384,6 +385,8 @@ bb = f"""<section class="hero hero--klein">
   </div>
 </section>
 
+{KW.keuzewijzer()}
+
 <section class="section section--wit">
   <div class="wrap">
     <div class="kop">
@@ -394,6 +397,8 @@ bb = f"""<section class="hero hero--klein">
     <div class="illustratiekader illustratiekader--breed">{doorsnede()}</div>
   </div>
 </section>
+
+{KW.voorbeelden()}
 
 <section class="section" id="borduren">
   <div class="wrap">
@@ -465,6 +470,8 @@ bb = f"""<section class="hero hero--klein">
     </div>
   </div>
 </section>
+
+{KW.per_product(P, kleding)}
 
 {CTA}"""
 

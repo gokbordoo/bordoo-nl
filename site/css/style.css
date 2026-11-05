@@ -496,3 +496,23 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .cta .cta__tweede { border-color: rgba(255,255,255,.6); color: var(--wit); }
 .cta .cta__tweede:hover { background: var(--wit); color: var(--bordeaux); border-color: var(--wit); }
 .functie__items li { display: flex; } .functie__items a { align-content: start; }
+
+/* ===== BORDOO V2 – borduren & bedrukken ===== */
+.kw { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .kw { grid-template-columns: 1fr; } }
+.kw__vragen { display: grid; gap: 18px; }
+.kw-vraag { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; }
+.kw-vraag legend { font: 700 17px var(--display); display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.kw__advies { position: sticky; top: 190px; background: var(--lichtgrijs); border-radius: var(--radius); padding: 22px; display: grid; gap: 10px; border-top: 3px solid var(--lijn); }
+.kw__advies.is-b, .kw__advies.is-d, .kw__advies.is-bd { border-top-color: var(--goud); }
+.kw__label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--goud-tekst); }
+.kw__advies strong { font: 800 26px/1.15 var(--display); color: var(--bordeaux); }
+.kw__advies p { color: var(--tekst-zacht); }
+@media (max-width: 860px) { .kw__advies { position: static; } }
+.pp { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 860px) { .pp { grid-template-columns: 1fr; } }
+.pp-groep { background: var(--wit); border: 1px solid var(--lijn); border-radius: var(--radius); padding: 18px; }
+.pp-groep h3 { font-size: 17px; margin-bottom: 12px; }
+.pp-groep ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.pp-groep li { display: flex; align-items: center; gap: 10px; font-size: 14.5px; }
+.pp-img { width: 40px; height: 40px; flex: none; background: var(--lichtgrijs); border-radius: 4px; }
