@@ -242,6 +242,7 @@ def page(fn, title, desc, body, branche=None):
         var nr = nummer();
         f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) {{ h.value = nr; }});
         var veld = function (n) {{ var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; }};
+        f.setAttribute('action', 'bedankt.html?nr=' + encodeURIComponent(nr));
         try {{ sessionStorage.setItem('bordoo-verzonden', JSON.stringify({{ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') }})); }} catch (x) {{}}
       }});
     }});
@@ -761,6 +762,8 @@ bedankt = """<section class="hero hero--klein">
 <script>
   (function () {
     var d; try { d = JSON.parse(sessionStorage.getItem('bordoo-verzonden') || 'null'); } catch (e) { d = null; }
+    var m = /[?&]nr=(BRD-[0-9]{6}-[A-Z0-9]{4})/.exec(location.search);
+    if (m && (!d || d.nr !== m[1])) d = { nr: m[1] };
     if (!d || !d.nr) return;
     document.getElementById('b-nr').textContent = d.nr;
     if (d.aanvraag) {

@@ -539,6 +539,7 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .regels .knop { justify-self: start; }
 .bevestiging { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
 @media (max-width: 860px) { .bevestiging { grid-template-columns: 1fr; } }
+.bevestiging__kaart[hidden], #b-regels-blok[hidden] { display: none; }
 .bevestiging__kaart { background: var(--wit); border: 1px solid var(--lijn); border-top: 3px solid var(--goud); border-radius: var(--radius); padding: 24px; display: grid; gap: 10px; }
 .bevestiging__nr { font: 800 32px/1.1 var(--display); color: var(--bordeaux); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
 .bevestiging__kaart h2, .bevestiging__stappen h2 { font-size: 20px; margin-top: 8px; }
