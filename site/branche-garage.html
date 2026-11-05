@@ -285,6 +285,32 @@
   </div>
 </footer>
 <script>
+  (function () {
+    var MAX = 8 * 1024 * 1024;
+    function nummer() {
+      var d = new Date(), t = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = '';
+      for (var i = 0; i < 4; i++) r += t.charAt(Math.floor(Math.random() * t.length));
+      return 'BRD-' + String(d.getFullYear()).slice(2) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + r;
+    }
+    document.querySelectorAll('form[data-netlify]').forEach(function (f) {
+      f.addEventListener('submit', function (e) {
+        if (e.defaultPrevented) return;
+        var totaal = 0;
+        f.querySelectorAll('input[type=file]').forEach(function (i) { if (i.files[0]) totaal += i.files[0].size; });
+        var melding = f.querySelector('.js-bestandsfout');
+        if (totaal > MAX) {
+          e.preventDefault();
+          if (!melding) { melding = document.createElement('p'); melding.className = 'ss-fout js-bestandsfout'; f.querySelector('button[type=submit]').insertAdjacentElement('beforebegin', melding); }
+          melding.textContent = 'Uw bestanden zijn samen ' + (totaal / 1048576).toFixed(1) + ' MB. Dat is te groot (maximaal 8 MB). Kies een kleiner bestand of stuur uw logo daarna per mail naar info@bordoo.nl.';
+          melding.scrollIntoView({ block: 'center' }); return;
+        }
+        var nr = nummer();
+        f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) { h.value = nr; });
+        var veld = function (n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; };
+        try { sessionStorage.setItem('bordoo-verzonden', JSON.stringify({ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') })); } catch (x) {}
+      });
+    });
+  })();
   var k = document.querySelector('.menuknop'), m = document.getElementById('mobielmenu');
   k.addEventListener('click', function () { var o = m.classList.toggle('open'); k.setAttribute('aria-expanded', o); k.textContent = o ? 'Sluiten' : 'Menu'; });
   document.addEventListener('keydown', function (e) {

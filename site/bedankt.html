@@ -120,10 +120,43 @@
       <span class="eyebrow">Aanvraag ontvangen</span>
       <h1>Bedankt voor uw aanvraag</h1>
       <p class="intro">We hebben uw aanvraag ontvangen en nemen zo snel mogelijk contact met u op, meestal binnen twee werkdagen.</p>
+    </div>
+  </div>
+</section>
+<section class="section section--compact">
+  <div class="wrap bevestiging">
+    <div class="bevestiging__kaart" id="bevestiging" hidden>
+      <span class="kw__label">Uw aanvraagnummer</span>
+      <strong class="bevestiging__nr" id="b-nr"></strong>
+      <p class="hint">Noem dit nummer als u contact met ons opneemt.</p>
+      <div id="b-regels-blok" hidden><h2>Uw aanvraag</h2><ol class="bevestiging__regels" id="b-regels"></ol></div>
+      <p class="hint" id="b-email"></p>
+    </div>
+    <div class="bevestiging__stappen">
+      <h2>Wat gebeurt er nu?</h2>
+      <ol class="stappen-lijst">
+        <li><strong>We bekijken uw aanvraag</strong> en uw logo.</li>
+        <li><strong>U ontvangt een voorstel</strong> met prijs en een voorbeeld van hoe het logo op de kleding komt.</li>
+        <li><strong>Na uw akkoord</strong> borduren of bedrukken wij de kleding.</li>
+      </ol>
       <div class="knoppen"><a class="knop knop--goud" href="index.html">Terug naar de homepage</a></div>
     </div>
   </div>
 </section>
+<script>
+  (function () {
+    var d; try { d = JSON.parse(sessionStorage.getItem('bordoo-verzonden') || 'null'); } catch (e) { d = null; }
+    if (!d || !d.nr) return;
+    document.getElementById('b-nr').textContent = d.nr;
+    if (d.aanvraag) {
+      var ol = document.getElementById('b-regels');
+      d.aanvraag.split('\n').forEach(function (r) { var li = document.createElement('li'); li.textContent = r.replace(/^\d+\.\s*/, ''); ol.appendChild(li); });
+      document.getElementById('b-regels-blok').hidden = false;
+    }
+    if (d.email) document.getElementById('b-email').textContent = 'We reageren op ' + d.email + '.';
+    document.getElementById('bevestiging').hidden = false;
+  })();
+</script>
 </main>
 <footer class="footer">
   <div class="wrap">
@@ -161,6 +194,32 @@
   </div>
 </footer>
 <script>
+  (function () {
+    var MAX = 8 * 1024 * 1024;
+    function nummer() {
+      var d = new Date(), t = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = '';
+      for (var i = 0; i < 4; i++) r += t.charAt(Math.floor(Math.random() * t.length));
+      return 'BRD-' + String(d.getFullYear()).slice(2) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + r;
+    }
+    document.querySelectorAll('form[data-netlify]').forEach(function (f) {
+      f.addEventListener('submit', function (e) {
+        if (e.defaultPrevented) return;
+        var totaal = 0;
+        f.querySelectorAll('input[type=file]').forEach(function (i) { if (i.files[0]) totaal += i.files[0].size; });
+        var melding = f.querySelector('.js-bestandsfout');
+        if (totaal > MAX) {
+          e.preventDefault();
+          if (!melding) { melding = document.createElement('p'); melding.className = 'ss-fout js-bestandsfout'; f.querySelector('button[type=submit]').insertAdjacentElement('beforebegin', melding); }
+          melding.textContent = 'Uw bestanden zijn samen ' + (totaal / 1048576).toFixed(1) + ' MB. Dat is te groot (maximaal 8 MB). Kies een kleiner bestand of stuur uw logo daarna per mail naar info@bordoo.nl.';
+          melding.scrollIntoView({ block: 'center' }); return;
+        }
+        var nr = nummer();
+        f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) { h.value = nr; });
+        var veld = function (n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; };
+        try { sessionStorage.setItem('bordoo-verzonden', JSON.stringify({ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') })); } catch (x) {}
+      });
+    });
+  })();
   var k = document.querySelector('.menuknop'), m = document.getElementById('mobielmenu');
   k.addEventListener('click', function () { var o = m.classList.toggle('open'); k.setAttribute('aria-expanded', o); k.textContent = o ? 'Sluiten' : 'Menu'; });
   document.addEventListener('keydown', function (e) {

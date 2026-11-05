@@ -198,6 +198,32 @@ def page(fn, title, desc, body, branche=None):
   </div>
 </footer>
 <script>
+  (function () {{
+    var MAX = 8 * 1024 * 1024;
+    function nummer() {{
+      var d = new Date(), t = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', r = '';
+      for (var i = 0; i < 4; i++) r += t.charAt(Math.floor(Math.random() * t.length));
+      return 'BRD-' + String(d.getFullYear()).slice(2) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + r;
+    }}
+    document.querySelectorAll('form[data-netlify]').forEach(function (f) {{
+      f.addEventListener('submit', function (e) {{
+        if (e.defaultPrevented) return;
+        var totaal = 0;
+        f.querySelectorAll('input[type=file]').forEach(function (i) {{ if (i.files[0]) totaal += i.files[0].size; }});
+        var melding = f.querySelector('.js-bestandsfout');
+        if (totaal > MAX) {{
+          e.preventDefault();
+          if (!melding) {{ melding = document.createElement('p'); melding.className = 'ss-fout js-bestandsfout'; f.querySelector('button[type=submit]').insertAdjacentElement('beforebegin', melding); }}
+          melding.textContent = 'Uw bestanden zijn samen ' + (totaal / 1048576).toFixed(1) + ' MB. Dat is te groot (maximaal 8 MB). Kies een kleiner bestand of stuur uw logo daarna per mail naar info@bordoo.nl.';
+          melding.scrollIntoView({{ block: 'center' }}); return;
+        }}
+        var nr = nummer();
+        f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) {{ h.value = nr; }});
+        var veld = function (n) {{ var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; }};
+        try {{ sessionStorage.setItem('bordoo-verzonden', JSON.stringify({{ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') }})); }} catch (x) {{}}
+      }});
+    }});
+  }})();
   var k = document.querySelector('.menuknop'), m = document.getElementById('mobielmenu');
   k.addEventListener('click', function () {{ var o = m.classList.toggle('open'); k.setAttribute('aria-expanded', o); k.textContent = o ? 'Sluiten' : 'Menu'; }});
   document.addEventListener('keydown', function (e) {{
@@ -605,10 +631,22 @@ off = f"""<section class="hero hero--klein">
         <div class="veld"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
         <div class="veld"><label for="telefoon">Telefoon</label><input id="telefoon" name="telefoon" type="tel" autocomplete="tel"></div>
       </div>
+      <input type="hidden" name="aanvraag" id="o-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer">
       <div class="veld--rij">
         <div class="veld"><label for="branche">Branche</label><select id="branche" name="branche"><option value="">Kies uw branche</option>{opties_branche}<option value="anders">Anders</option></select></div>
-        <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option>{opties_product}<option value="anders">Anders / meerdere</option></select></div>
+        <div class="veld"><label for="datum">Wanneer nodig?</label><input id="datum" name="datum" type="date"></div>
       </div>
+      <fieldset class="regels">
+        <legend>Welke kleding?</legend>
+        <div class="regels__lijst" id="regels">
+          <div class="regel">
+            <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option>{opties_product}<option value="anders">Anders / meerdere</option></select></div>
+            <div class="veld regel__aantal"><label for="aantal">Aantal</label><input id="aantal" name="aantal" type="number" min="1" inputmode="numeric" placeholder="bijv. 25"></div>
+            <div class="veld"><label for="maten">Maten <span class="hint">(optioneel)</span></label><input id="maten" name="maten" type="text" placeholder="bijv. 5×M, 10×L, 10×XL"></div>
+          </div>
+        </div>
+        <button type="button" class="knop knop--rand knop--klein" id="regel-erbij">+ Nog een product</button>
+      </fieldset>
       <fieldset>
         <legend>Borduren of bedrukken? *</legend>
         <div class="keuzes">
@@ -618,14 +656,16 @@ off = f"""<section class="hero hero--klein">
         </div>
       </fieldset>
       <div class="veld--rij">
-        <div class="veld"><label for="aantal">Aantal stuks</label><input id="aantal" name="aantal" type="number" min="1" inputmode="numeric" placeholder="bijv. 25"></div>
-        <div class="veld"><label for="datum">Wanneer nodig?</label><input id="datum" name="datum" type="date"></div>
+        <div class="veld">
+          <label for="logo">Uw logo of ontwerp</label>
+          <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
+        </div>
+        <div class="veld">
+          <label for="logo_2">Tweede logo <span class="hint">(optioneel, bijv. voor de rug)</span></label>
+          <input id="logo_2" name="logo_2" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
+        </div>
       </div>
-      <div class="veld">
-        <label for="logo">Uw logo of ontwerp</label>
-        <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps">
-        <span class="hint">Liefst als PDF, SVG of AI. Een PNG of JPG mag ook.</span>
-      </div>
+      <p class="hint">Liefst als PDF, SVG of AI. Een PNG of JPG mag ook. Samen maximaal 8 MB.</p>
       <div class="veld"><label for="bericht">Toelichting</label><textarea id="bericht" name="bericht" placeholder="Bijv. kleur van de kleding, maten, plek van het logo (borst, rug, mouw)"></textarea></div>
       <label class="akkoord"><input type="checkbox" id="akkoord" name="akkoord" required> <span>Ik ga akkoord dat Bordoo mijn gegevens gebruikt om deze aanvraag te beantwoorden, zoals beschreven in de <a href="privacy.html" target="_blank">privacyverklaring</a>. *</span></label>
       <div><button class="knop knop--hoofd" type="submit">Verstuur aanvraag</button></div>
@@ -643,6 +683,26 @@ off = f"""<section class="hero hero--klein">
   (function () {{
     var q = new URLSearchParams(location.search);
     ['branche', 'product'].forEach(function (n) {{ var v = q.get(n), s = document.getElementById(n); if (v && s.querySelector('option[value="' + v + '"]')) s.value = v; }});
+    var lijst = document.getElementById('regels'), eerste = lijst.querySelector('.regel'), n = 1;
+    document.getElementById('regel-erbij').addEventListener('click', function () {{
+      n++;
+      var r = eerste.cloneNode(true);
+      r.querySelectorAll('[id]').forEach(function (el) {{ el.id = el.id + '-' + n; el.removeAttribute('name'); if (el.tagName === 'SELECT') el.selectedIndex = 0; else el.value = ''; }});
+      r.querySelectorAll('label[for]').forEach(function (l) {{ l.setAttribute('for', l.getAttribute('for') + '-' + n); }});
+      var weg = document.createElement('button'); weg.type = 'button'; weg.className = 'pk-weg regel__weg'; weg.setAttribute('aria-label', 'Product verwijderen'); weg.textContent = '×';
+      weg.addEventListener('click', function () {{ r.remove(); }});
+      r.appendChild(weg); lijst.appendChild(r); r.querySelector('select').focus();
+    }});
+    // alle productregels samenvatten in het veld "aanvraag" (vóór de algemene verzendcode)
+    document.querySelector('form[name="offerte"]').addEventListener('submit', function () {{
+      var regels = [];
+      lijst.querySelectorAll('.regel').forEach(function (r) {{
+        var sel = r.querySelector('select'), a = r.querySelector('input[type=number]').value, m = r.querySelector('input[type=text]').value;
+        if (!sel.value && !a) return;
+        regels.push((regels.length + 1) + '. ' + (sel.value ? sel.options[sel.selectedIndex].text : 'Product nog niet gekozen') + (a ? ' – ' + a + ' stuks' : '') + (m ? ' – maten: ' + m : ''));
+      }});
+      document.getElementById('o-aanvraag').value = regels.join('\\n');
+    }});
   }})();
 </script>"""
 
@@ -652,10 +712,43 @@ bedankt = """<section class="hero hero--klein">
       <span class="eyebrow">Aanvraag ontvangen</span>
       <h1>Bedankt voor uw aanvraag</h1>
       <p class="intro">We hebben uw aanvraag ontvangen en nemen zo snel mogelijk contact met u op, meestal binnen twee werkdagen.</p>
+    </div>
+  </div>
+</section>
+<section class="section section--compact">
+  <div class="wrap bevestiging">
+    <div class="bevestiging__kaart" id="bevestiging" hidden>
+      <span class="kw__label">Uw aanvraagnummer</span>
+      <strong class="bevestiging__nr" id="b-nr"></strong>
+      <p class="hint">Noem dit nummer als u contact met ons opneemt.</p>
+      <div id="b-regels-blok" hidden><h2>Uw aanvraag</h2><ol class="bevestiging__regels" id="b-regels"></ol></div>
+      <p class="hint" id="b-email"></p>
+    </div>
+    <div class="bevestiging__stappen">
+      <h2>Wat gebeurt er nu?</h2>
+      <ol class="stappen-lijst">
+        <li><strong>We bekijken uw aanvraag</strong> en uw logo.</li>
+        <li><strong>U ontvangt een voorstel</strong> met prijs en een voorbeeld van hoe het logo op de kleding komt.</li>
+        <li><strong>Na uw akkoord</strong> borduren of bedrukken wij de kleding.</li>
+      </ol>
       <div class="knoppen"><a class="knop knop--goud" href="index.html">Terug naar de homepage</a></div>
     </div>
   </div>
-</section>"""
+</section>
+<script>
+  (function () {
+    var d; try { d = JSON.parse(sessionStorage.getItem('bordoo-verzonden') || 'null'); } catch (e) { d = null; }
+    if (!d || !d.nr) return;
+    document.getElementById('b-nr').textContent = d.nr;
+    if (d.aanvraag) {
+      var ol = document.getElementById('b-regels');
+      d.aanvraag.split('\\n').forEach(function (r) { var li = document.createElement('li'); li.textContent = r.replace(/^\\d+\\.\\s*/, ''); ol.appendChild(li); });
+      document.getElementById('b-regels-blok').hidden = false;
+    }
+    if (d.email) document.getElementById('b-email').textContent = 'We reageren op ' + d.email + '.';
+    document.getElementById('bevestiging').hidden = false;
+  })();
+</script>"""
 
 files = {
     "index.html": ("Bordoo – Bedrijfskleding borduren en bedrukken", "Stel zelf uw kleding met logo samen: kies product, kleur en maten en upload uw logo. Bordoo borduurt en bedrukt bedrijfskleding voor elke branche.", home_body(B, P, kleding, doorsnede(), CTA, stapbeeld, TEL), None),

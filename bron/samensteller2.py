@@ -39,7 +39,7 @@ def samensteller_body(tel, mail):
       <p class="verborgen"><label>Niet invullen: <input name="website"></label></p>
       <input type="hidden" name="kleur" id="h-kleur"><input type="hidden" name="logo_plekken" id="h-plekken">
       <input type="hidden" name="maten" id="h-maten"><input type="hidden" name="totaal" id="h-totaal">
-      <input type="hidden" name="aanvraag" id="h-aanvraag"><input type="hidden" name="aantal_producten" id="h-aantalproducten">
+      <input type="hidden" name="aanvraag" id="h-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer"><input type="hidden" name="aantal_producten" id="h-aantalproducten">
 
       <fieldset class="ss-stap">
         <legend><span class="ss-nr">1</span> Kies een product</legend>
@@ -57,6 +57,11 @@ def samensteller_body(tel, mail):
           <label for="logo">Upload uw logo</label>
           <input id="logo" name="logo" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps,.webp">
           <span class="hint" id="ss-logohint">PNG, JPG, SVG of PDF ziet u meteen in het voorbeeld. Een EPS-bestand nemen we mee in de aanvraag.</span>
+        </div>
+        <div class="veld">
+          <label for="logo_2">Tweede logo <span class="hint">(optioneel, bijv. een ander logo voor de rug)</span></label>
+          <input id="logo_2" name="logo_2" type="file" accept=".png,.jpg,.jpeg,.svg,.pdf,.ai,.eps,.webp">
+          <span class="hint">Wordt meegestuurd met uw aanvraag. Samen met het eerste logo maximaal 8 MB.</span>
         </div>
         <div class="veld">
           <span class="veldlabel">Borduren of bedrukken?</span>

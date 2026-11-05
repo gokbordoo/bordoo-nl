@@ -527,3 +527,22 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .ss-mandlijst li::before { content: counter(regel); display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--bordeaux); color: var(--wit); font-size: 12px; font-weight: 700; }
 .ss-mandlijst li span { color: var(--tekst-zacht); font-size: 13.5px; }
 .ss-huidig-kop { font: 600 13px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--goud-tekst); margin: 4px 0 -4px; }
+
+/* ===== BORDOO V2 – offerteformulier en bevestiging ===== */
+.regels { display: grid; gap: 12px; }
+.regels legend { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+.regels__lijst { display: grid; gap: 10px; }
+.regel { position: relative; display: grid; grid-template-columns: 1.4fr .6fr 1.2fr; gap: 12px; background: var(--lichtgrijs); border-radius: var(--radius); padding: 12px; }
+.regel { padding-right: 40px; }
+.regel__weg { position: absolute; right: 8px; top: 8px; }
+@media (max-width: 600px) { .regel { grid-template-columns: 1fr 1fr; } .regel .veld:first-child, .regel .veld:last-of-type { grid-column: 1 / -1; } }
+.regels .knop { justify-self: start; }
+.bevestiging { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 28px; align-items: start; }
+@media (max-width: 860px) { .bevestiging { grid-template-columns: 1fr; } }
+.bevestiging__kaart { background: var(--wit); border: 1px solid var(--lijn); border-top: 3px solid var(--goud); border-radius: var(--radius); padding: 24px; display: grid; gap: 10px; }
+.bevestiging__nr { font: 800 32px/1.1 var(--display); color: var(--bordeaux); letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.bevestiging__kaart h2, .bevestiging__stappen h2 { font-size: 20px; margin-top: 8px; }
+.bevestiging__regels { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+.bevestiging__stappen { display: grid; gap: 14px; }
+.stappen-lijst { margin: 0; padding-left: 20px; display: grid; gap: 10px; }
+.stappen-lijst li::marker { color: var(--goud-tekst); font-weight: 700; }
