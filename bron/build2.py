@@ -3,6 +3,7 @@ import sys, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 from garments import img as kleding, G, TSHIRT, logo as oo, LIJN, bestand_svg, bestand_svg_achter, heeft_achterkant, _STIJL, BESTANDEN_MAP
 import config_garments as CG
+from branches_v2 import aanbevolen, cta_branche
 from home import home_body
 from samensteller2 import samensteller_body
 from config_garments import VAN_PRODUCT
@@ -561,8 +562,9 @@ def branchepagina(k, menu, titel, intro, tegel, icon, prods):
     <p class="hint" style="margin-top:20px">Afbeeldingen zijn tekeningen ter illustratie. Merk, model en kleur kiest u samen met ons bij de offerte.</p>
   </div>
 </section>
-{CTA}
-<section class="section section--wit">
+{aanbevolen(k, menu, P, kleding)}
+{cta_branche(k, menu)}
+<section class="section section--compact">
   <div class="wrap andere">
     <span class="eyebrow">Andere branches</span>
     <div class="andere__links">{andere}</div>

@@ -480,3 +480,19 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .kleurstippen { display: inline-flex; flex-wrap: wrap; gap: 4px; }
 .kleurstip { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(0,0,0,.18); display: inline-block; }
 @media (prefers-reduced-motion: reduce) { .product__beeld img { transition: none; } }
+
+/* ===== BORDOO V2 – branchepagina's ===== */
+.functies { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+.functie { background: var(--lichtgrijs); border-radius: var(--radius); padding: 22px; display: grid; gap: 8px; align-content: start; }
+.functie p { color: var(--tekst-zacht); font-size: 15px; }
+.functie__items { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.functie__items a { display: grid; justify-items: center; gap: 4px; width: 96px; padding: 8px 6px 10px; background: var(--wit); border: 1px solid transparent; border-radius: var(--radius); text-decoration: none; color: var(--tekst); font-size: 13px; font-weight: 500; text-align: center; line-height: 1.25; }
+.functie__items a:hover { border-color: var(--bordeaux); color: var(--bordeaux); }
+.functie__img { width: 60px; height: 60px; }
+.tipblok { margin-top: 18px; display: flex; gap: 14px; align-items: baseline; background: var(--lichtgrijs); border-left: 3px solid var(--goud); border-radius: var(--radius); padding: 14px 18px; }
+.tipblok strong { font-family: var(--display); color: var(--goud-tekst); text-transform: uppercase; letter-spacing: .12em; font-size: 13px; }
+.tipblok p { color: var(--tekst); }
+.cta .knoppen { gap: 12px; }
+.cta .cta__tweede { border-color: rgba(255,255,255,.6); color: var(--wit); }
+.cta .cta__tweede:hover { background: var(--wit); color: var(--bordeaux); border-color: var(--wit); }
+.functie__items li { display: flex; } .functie__items a { align-content: start; }
