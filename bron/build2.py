@@ -6,8 +6,9 @@ import config_garments as CG
 from branches_v2 import aanbevolen, cta_branche
 import keuzewijzer as KW
 import vertrouwen as VT
+import seo as SEO
 from home import home_body
-from samensteller2 import samensteller_body
+from samensteller2 import samensteller_body, data_js, product_svgs
 from config_garments import VAN_PRODUCT
 from privacy import PRIVACY
 
@@ -100,15 +101,29 @@ NAMEN = {"bedrijfskleding.html": "Alle branches", "borduren-bedrukken.html": "Bo
          "over-bordoo.html": "Over Bordoo", "werkwijze.html": "Werkwijze", "veelgestelde-vragen.html": "Veelgestelde vragen", "404.html": "Pagina niet gevonden"}
 
 
-def kruimelpad(fn, branche):
-    """Kruimelpad onder de kop (niet op de homepage)."""
-    if fn == "index.html":
-        return ""
+def kruimelstappen(fn, branche):
     stappen = [("index.html", "Home")]
     if branche:
         stappen += [("bedrijfskleding.html", "Alle branches"), (fn, next(b[1] for b in B if b[0] == branche))]
     else:
         stappen.append((fn, NAMEN.get(fn, "")))
+    return stappen
+
+
+def structured(fn, branche):
+    data = [SEO.organisatie("+31648399904", MAIL)] if fn == "index.html" else []
+    if fn not in ("index.html", "404.html", "bedankt.html"):
+        data.append(SEO.kruimel_data(kruimelstappen(fn, branche)))
+    if fn == "veelgestelde-vragen.html":
+        data.append(SEO.faq_data(VT.FAQ))
+    return data
+
+
+def kruimelpad(fn, branche):
+    """Kruimelpad onder de kop (niet op de homepage)."""
+    if fn == "index.html":
+        return ""
+    stappen = kruimelstappen(fn, branche)
     items = "".join(f'<li><a href="{f}">{n}</a></li>' for f, n in stappen[:-1]) + f'<li aria-current="page">{stappen[-1][1]}</li>'
     return f'<nav class="kruimel" aria-label="Kruimelpad"><ol class="wrap">{items}</ol></nav>\n'
 
@@ -124,7 +139,7 @@ def page(fn, title, desc, body, branche=None):
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{title}</title>
 <meta name="description" content="{desc}">
-<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+{SEO.kop_extra(fn, title, desc, structured(fn, branche))}<link rel="icon" href="img/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="img/icoon.png">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -780,9 +795,16 @@ for naam in _STIJL:
     (OUT / BESTANDEN_MAP / f"{naam}.svg").write_text(bestand_svg(naam), encoding="utf-8")
     if heeft_achterkant(naam):
         (OUT / BESTANDEN_MAP / f"{naam}-achter.svg").write_text(bestand_svg_achter(naam), encoding="utf-8")
+(OUT / "sitemap.xml").write_text(SEO.sitemap(files), encoding="utf-8")
+(OUT / "js").mkdir(exist_ok=True)
+(OUT / "js" / "samensteller-data.js").write_text(data_js(), encoding="utf-8")
+(OUT / "img" / "samensteller").mkdir(parents=True, exist_ok=True)
+for pid, inhoud in product_svgs().items():
+    (OUT / "img" / "samensteller" / f"{pid}.svg").write_text(inhoud, encoding="utf-8")
+(OUT / "robots.txt").write_text(SEO.ROBOTS, encoding="utf-8")
 for fn, (title, desc, body, br) in files.items():
     html = page(fn, title, desc, body, br)
     if fn == "404.html":
-        html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<base href="/">\n<meta name="robots" content="noindex">', 1)
+        html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<base href="/">', 1)
     (OUT / fn).write_text(html, encoding="utf-8")
 print("ok", len(files))

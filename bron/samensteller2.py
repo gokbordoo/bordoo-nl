@@ -6,7 +6,7 @@ from samensteller import mini
 
 def samensteller_body(tel, mail):
     knoppen = "".join(
-        f'<label class="ss-product"><input type="radio" name="product" value="{p[0]}"{" checked" if p[0] == "polo" else ""}>{mini(p[0])}<span>{p[1]}</span></label>'
+        f'<label class="ss-product"><input type="radio" name="product" value="{p[0]}"{" checked" if p[0] == "polo" else ""}><img src="img/samensteller/{p[0]}.svg" alt="" width="56" height="56" loading="lazy" decoding="async"><span>{p[1]}</span></label>'
         for p in PRODUCTEN)
     return f"""<section class="kopstrook">
   <div class="wrap">
@@ -121,9 +121,10 @@ def samensteller_body(tel, mail):
   </div>
 </section>
 
+<script src="js/samensteller-data.js"></script>
 <script>
 (function () {{
-  var D = {json.dumps(data(), ensure_ascii=False)};
+  var D = window.BORDOO_DATA;
   var FOTOS = {json.dumps(FOTOS)};
   var VAN = {json.dumps(VAN_PRODUCT)};
   var MATEN = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '3XL'];
@@ -371,3 +372,21 @@ def samensteller_body(tel, mail):
   kiesProduct(start);
 }})();
 </script>"""
+
+
+
+def data_js():
+    """Inhoud van js/samensteller-data.js: producten, kleuren en tekeningen (door de browser bewaard)."""
+    return "window.BORDOO_DATA = " + json.dumps(data(), ensure_ascii=False) + ";\n"
+
+
+def product_svgs():
+    """Kleine productplaatjes voor de knoppen in stap 1, als losse bestanden (eerste kleur van elk product)."""
+    from samensteller import naadkleur
+    from config_garments import KLEUREN
+    uit = {}
+    for p in PRODUCTEN:
+        hexk = KLEUREN[p[4][0]][1]
+        uit[p[0]] = (f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" '
+                     f'style="--stof:{hexk};--naad:{naadkleur(hexk)}">{p[2]}</svg>\n')
+    return uit
