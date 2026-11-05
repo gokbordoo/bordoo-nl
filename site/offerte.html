@@ -144,6 +144,7 @@
   <div class="wrap duo" style="align-items:start">
     <form class="form" name="offerte" method="POST" action="bedankt.html" data-netlify="true" netlify-honeypot="website" enctype="multipart/form-data">
       <input type="hidden" name="form-name" value="offerte">
+      <input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer"><input type="hidden" name="overzicht" class="js-overzicht"><input type="hidden" name="subject" class="js-onderwerp" data-remove-prefix value="Nieuwe aanvraag via bordoo.nl">
       <p class="verborgen"><label>Niet invullen: <input name="website"></label></p>
       <div class="veld--rij">
         <div class="veld"><label for="naam">Naam *</label><input id="naam" name="naam" type="text" autocomplete="name" required></div>
@@ -153,7 +154,7 @@
         <div class="veld"><label for="email">E-mail *</label><input id="email" name="email" type="email" autocomplete="email" required></div>
         <div class="veld"><label for="telefoon">Telefoon</label><input id="telefoon" name="telefoon" type="tel" autocomplete="tel"></div>
       </div>
-      <input type="hidden" name="aanvraag" id="o-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer">
+      <input type="hidden" name="aanvraag" id="o-aanvraag">
       <div class="veld--rij">
         <div class="veld"><label for="branche">Branche</label><select id="branche" name="branche"><option value="">Kies uw branche</option><option value="horeca">Horeca</option><option value="bouw">Bouw</option><option value="garage">Garage & techniek</option><option value="schoonmaak">Schoonmaak</option><option value="zorg">Zorg & beauty</option><option value="transport">Transport</option><option value="kantoor">Kantoor & winkel</option><option value="sport">Sport & clubs</option><option value="particulier">Particulier</option><option value="anders">Anders</option></select></div>
         <div class="veld"><label for="datum">Wanneer nodig?</label><input id="datum" name="datum" type="date"></div>
@@ -274,7 +275,7 @@
       for (var i = 0; i < 4; i++) r += t.charAt(Math.floor(Math.random() * t.length));
       return 'BRD-' + String(d.getFullYear()).slice(2) + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + r;
     }
-    document.querySelectorAll('form[data-netlify]').forEach(function (f) {
+    document.querySelectorAll('form[name="offerte"], form[name="samenstelling"]').forEach(function (f) {
       f.addEventListener('submit', function (e) {
         if (e.defaultPrevented) return;
         var totaal = 0;
@@ -289,6 +290,24 @@
         var nr = nummer();
         f.querySelectorAll('.js-aanvraagnummer').forEach(function (h) { h.value = nr; });
         var veld = function (n) { var el = f.querySelector('[name="' + n + '"]'); return el ? el.value : ''; };
+        var keuze = function (n) { var el = f.querySelector('[name="' + n + '"]:checked'); return el ? el.value : ''; };
+        var bestand = function (n) { var el = f.querySelector('[name="' + n + '"]'); return el && el.files && el.files[0] ? el.files[0].name : ''; };
+        var rij = function (label, w) { return w ? label + ': ' + w : ''; };
+        var blok = function (titel, rijen) { rijen = rijen.filter(Boolean); return rijen.length ? '— ' + titel + ' —\n' + rijen.join('\n') : ''; };
+        var samen = f.getAttribute('name') === 'samenstelling';
+        var producten = veld('aanvraag') || [veld('product'), veld('aantal') && veld('aantal') + ' stuks', veld('maten') && 'maten: ' + veld('maten')].filter(Boolean).join(' · ');
+        var logos = [bestand('logo'), bestand('logo_2')].filter(Boolean).join(' + ');
+        var datum = veld('datum') ? veld('datum').split('-').reverse().join('-') : '';
+        var tekst = [
+          'Aanvraagnummer: ' + nr + '\nVia: ' + (samen ? 'Zelf samenstellen' : 'Offerteformulier'),
+          blok('KLANT', [rij('Naam', veld('naam')), rij('Bedrijf', veld('bedrijf')), rij('E-mail', veld('email')), rij('Telefoon', veld('telefoon'))]),
+          blok('PRODUCTEN', [producten || 'Niet ingevuld']),
+          blok('DETAILS', [rij('Techniek', keuze(samen ? 'techniek' : 'dienst')), rij('Branche', veld('branche')), rij('Nodig op', datum), rij('Logo', logos || 'geen bestand meegestuurd')]),
+          blok('BERICHT', [veld('bericht')])
+        ].filter(Boolean).join('\n\n');
+        f.querySelectorAll('.js-overzicht').forEach(function (h) { h.value = tekst; });
+        var aantal = producten ? producten.split('\n').length : 0;
+        f.querySelectorAll('.js-onderwerp').forEach(function (h) { h.value = 'Aanvraag ' + nr + ' – ' + veld('naam') + (veld('bedrijf') ? ' (' + veld('bedrijf') + ')' : '') + (aantal ? ' – ' + aantal + (aantal === 1 ? ' product' : ' producten') : ''); });
         f.setAttribute('action', 'bedankt.html?nr=' + encodeURIComponent(nr));
         try { sessionStorage.setItem('bordoo-verzonden', JSON.stringify({ nr: nr, naam: veld('naam'), email: veld('email'), aanvraag: veld('aanvraag') })); } catch (x) {}
       });

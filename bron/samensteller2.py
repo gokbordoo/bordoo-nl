@@ -36,10 +36,11 @@ def samensteller_body(tel, mail):
 
     <form class="form ss-form" id="ss-form" name="samenstelling" method="POST" action="bedankt.html" data-netlify="true" netlify-honeypot="website" enctype="multipart/form-data">
       <input type="hidden" name="form-name" value="samenstelling">
+      <input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer"><input type="hidden" name="overzicht" class="js-overzicht"><input type="hidden" name="subject" class="js-onderwerp" data-remove-prefix value="Nieuwe aanvraag via bordoo.nl">
       <p class="verborgen"><label>Niet invullen: <input name="website"></label></p>
       <input type="hidden" name="kleur" id="h-kleur"><input type="hidden" name="logo_plekken" id="h-plekken">
       <input type="hidden" name="maten" id="h-maten"><input type="hidden" name="totaal" id="h-totaal">
-      <input type="hidden" name="aanvraag" id="h-aanvraag"><input type="hidden" name="aanvraagnummer" class="js-aanvraagnummer"><input type="hidden" name="aantal_producten" id="h-aantalproducten">
+      <input type="hidden" name="aanvraag" id="h-aanvraag"><input type="hidden" name="aantal_producten" id="h-aantalproducten">
 
       <fieldset class="ss-stap">
         <legend><span class="ss-nr">1</span> Kies een product</legend>
