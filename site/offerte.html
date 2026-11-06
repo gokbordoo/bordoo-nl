@@ -163,7 +163,7 @@
         <legend>Welke kleding?</legend>
         <div class="regels__lijst" id="regels">
           <div class="regel">
-            <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option><option value="koksbuis">Koksbuizen</option><option value="schort">Schorten & sloven</option><option value="koksbroek">Koksbroeken</option><option value="polo">Polo's</option><option value="cap">Petten & caps</option><option value="werkjas">Werkjassen</option><option value="hesje">Veiligheidshesjes</option><option value="korte_werkbroek">Korte werkbroeken</option><option value="werkbroek">Werkbroeken</option><option value="hoodie">Sweaters & hoodies</option><option value="tshirt">T-shirts</option><option value="bodywarmer">Bodywarmers</option><option value="softshell">Softshell jassen</option><option value="overall">Overalls</option><option value="fleece">Fleecevesten</option><option value="tuniek">Tunieken</option><option value="kapschort">Kappers- en salonschorten</option><option value="overhemd">Overhemden & blouses</option><option value="trui">Truien & sweaters</option><option value="sportshirt">Sportshirts</option><option value="trainingsjas">Trainingsjassen</option><option value="tas">Tassen</option><option value="handdoek">Handdoeken & badjassen</option><option value="anders">Anders / meerdere</option></select></div>
+            <div class="veld"><label for="product">Product</label><select id="product" name="product"><option value="">Kies een product</option><option value="koksbuis" data-beeld="img/kleding/koksbuis.svg">Koksbuizen</option><option value="schort" data-beeld="img/kleding/schort.svg">Schorten & sloven</option><option value="koksbroek" data-beeld="img/kleding/koksbroek.svg">Koksbroeken</option><option value="polo" data-beeld="img/kleding/polo.svg">Polo's</option><option value="cap" data-beeld="img/kleding/cap.svg">Petten & caps</option><option value="werkjas" data-beeld="img/kleding/werkjas.svg">Werkjassen</option><option value="hesje" data-beeld="img/kleding/hesje.svg">Veiligheidshesjes</option><option value="korte_werkbroek" data-beeld="img/kleding/korte_werkbroek.svg">Korte werkbroeken</option><option value="werkbroek" data-beeld="img/kleding/werkbroek.svg">Werkbroeken</option><option value="hoodie" data-beeld="img/kleding/hoodie.svg">Sweaters & hoodies</option><option value="tshirt" data-beeld="img/kleding/tshirt.svg">T-shirts</option><option value="bodywarmer" data-beeld="img/kleding/bodywarmer.svg">Bodywarmers</option><option value="softshell" data-beeld="img/kleding/softshell.svg">Softshell jassen</option><option value="overall" data-beeld="img/kleding/overall.svg">Overalls</option><option value="fleece" data-beeld="img/kleding/fleece.svg">Fleecevesten</option><option value="tuniek" data-beeld="img/kleding/tuniek.svg">Tunieken</option><option value="kapschort" data-beeld="img/kleding/schort.svg">Kappers- en salonschorten</option><option value="overhemd" data-beeld="img/kleding/overhemd.svg">Overhemden & blouses</option><option value="trui" data-beeld="img/kleding/hoodie.svg">Truien & sweaters</option><option value="sportshirt" data-beeld="img/kleding/tshirt.svg">Sportshirts</option><option value="trainingsjas" data-beeld="img/kleding/fleece.svg">Trainingsjassen</option><option value="tas" data-beeld="img/kleding/tas.svg">Tassen</option><option value="handdoek" data-beeld="img/kleding/handdoek.svg">Handdoeken & badjassen</option><option value="anders">Anders / meerdere</option></select></div>
             <div class="veld regel__aantal"><label for="aantal">Aantal</label><input id="aantal" name="aantal" type="number" min="1" inputmode="numeric" placeholder="bijv. 25"></div>
             <div class="veld"><label for="maten">Maten <span class="hint">(optioneel)</span></label><input id="maten" name="maten" type="text" placeholder="bijv. 5×M, 10×L, 10×XL"></div>
           </div>
@@ -203,6 +203,7 @@
     </aside>
   </div>
 </section>
+<script src="js/controle.js?v=1"></script>
 <script>
   (function () {
     var q = new URLSearchParams(location.search);
@@ -218,7 +219,8 @@
       r.appendChild(weg); lijst.appendChild(r); r.querySelector('select').focus();
     });
     // alle productregels samenvatten in het veld "aanvraag" (vóór de algemene verzendcode)
-    document.querySelector('form[name="offerte"]').addEventListener('submit', function () {
+    var formulier = document.querySelector('form[name="offerte"]');
+    formulier.addEventListener('submit', function (e) {
       var regels = [];
       lijst.querySelectorAll('.regel').forEach(function (r) {
         var sel = r.querySelector('select'), a = r.querySelector('input[type=number]').value, m = r.querySelector('input[type=text]').value;
@@ -226,6 +228,7 @@
         regels.push((regels.length + 1) + '. ' + (sel.value ? sel.options[sel.selectedIndex].text : 'Product nog niet gekozen') + (a ? ' – ' + a + ' stuks' : '') + (m ? ' – maten: ' + m : ''));
       });
       document.getElementById('o-aanvraag').value = regels.join('\n');
+      if (window.BordooControle) window.BordooControle.akkoord(e, formulier, function () { return window.BordooControle.offerte(formulier); });
     });
   })();
 </script>

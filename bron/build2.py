@@ -648,7 +648,7 @@ def branchepagina(k, menu, titel, intro, tegel, icon, prods):
 
 
 opties_branche = "".join(f'<option value="{b[0]}">{b[1]}</option>' for b in B)
-opties_product = "".join(f'<option value="{k}">{v[0]}</option>' for k, v in P.items())
+opties_product = "".join(f'<option value="{k}" data-beeld="{BESTANDEN_MAP}/{v[1]}.svg">{v[0]}</option>' for k, v in P.items())
 off = f"""<section class="hero hero--klein">
   <div class="wrap">
     <div class="hero__tekst">
@@ -722,6 +722,7 @@ off = f"""<section class="hero hero--klein">
     </aside>
   </div>
 </section>
+<script src="js/controle.js?v=1"></script>
 <script>
   (function () {{
     var q = new URLSearchParams(location.search);
@@ -737,7 +738,8 @@ off = f"""<section class="hero hero--klein">
       r.appendChild(weg); lijst.appendChild(r); r.querySelector('select').focus();
     }});
     // alle productregels samenvatten in het veld "aanvraag" (vóór de algemene verzendcode)
-    document.querySelector('form[name="offerte"]').addEventListener('submit', function () {{
+    var formulier = document.querySelector('form[name="offerte"]');
+    formulier.addEventListener('submit', function (e) {{
       var regels = [];
       lijst.querySelectorAll('.regel').forEach(function (r) {{
         var sel = r.querySelector('select'), a = r.querySelector('input[type=number]').value, m = r.querySelector('input[type=text]').value;
@@ -745,6 +747,7 @@ off = f"""<section class="hero hero--klein">
         regels.push((regels.length + 1) + '. ' + (sel.value ? sel.options[sel.selectedIndex].text : 'Product nog niet gekozen') + (a ? ' – ' + a + ' stuks' : '') + (m ? ' – maten: ' + m : ''));
       }});
       document.getElementById('o-aanvraag').value = regels.join('\\n');
+      if (window.BordooControle) window.BordooControle.akkoord(e, formulier, function () {{ return window.BordooControle.offerte(formulier); }});
     }});
   }})();
 </script>"""
@@ -807,6 +810,7 @@ files = {
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])
 (OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
+(OUT / "js" / "controle.js").write_text((pathlib.Path(__file__).parent / "controle.js").read_text(encoding="utf-8"), encoding="utf-8")
 files.update({
     "over-bordoo.html": ("Over Bordoo – borduren en bedrukken van bedrijfskleding", "Bordoo borduurt en bedrukt bedrijfskleding met uw logo. Persoonlijk contact, eerlijk advies en eerst een voorbeeld.", VT.over(TEL, MAIL, CTA), None),
     "werkwijze.html": ("Werkwijze – Bordoo", "Zo werkt Bordoo: van aanvraag en voorstel tot productie en levering van uw kleding met logo.", VT.werkwijze(CTA), None),

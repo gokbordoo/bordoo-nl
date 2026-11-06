@@ -123,6 +123,7 @@ def samensteller_body(tel, mail):
 </section>
 
 <script src="js/samensteller-data.js"></script>
+<script src="js/controle.js?v=1"></script>
 <script>
 (function () {{
   var D = window.BORDOO_DATA;
@@ -254,7 +255,7 @@ def samensteller_body(tel, mail):
     $('h-kleur').value = D.kleuren[st.kleur].naam; $('h-plekken').value = plekken;
     $('h-maten').value = delen.join(', '); $('h-totaal').value = tot;
     if (tot) $('ss-fout').hidden = true;
-    st.huidig = {{ product: st.p.naam, kleur: D.kleuren[st.kleur].naam, techniek: techniek(), plekken: plekken, maten: st.p.maten === 'kleding' ? delen.join(', ') : '', totaal: tot }};
+    st.huidig = {{ pid: st.p.id, kid: st.kleur, pl: st.plekken.map(function (x) {{ return {{ id: x.id, cm: x.cm }}; }}), product: st.p.naam, kleur: D.kleuren[st.kleur].naam, techniek: techniek(), plekken: plekken, maten: st.p.maten === 'kleding' ? delen.join(', ') : '', totaal: tot }};
     $('ss-mandlijst').innerHTML = st.mand.map(function (r, i) {{
       return '<li><div><strong>' + esc(r.product) + '</strong> · ' + esc(r.kleur) + ' · ' + r.totaal + ' stuks<br><span>' + esc(r.techniek) + ', logo: ' + esc(r.plekken) + (r.maten ? ' · ' + esc(r.maten) : '') + '</span></div>' +
         '<button type="button" class="pk-weg" data-mandweg="' + i + '" aria-label="' + esc(r.product) + ' uit de aanvraag halen">×</button></li>';
@@ -364,8 +365,44 @@ def samensteller_body(tel, mail):
     if (tot && !st.plekken.length) {{ $('pk-fout').hidden = false; fout = true; }}
     if (!tot && !st.mand.length) {{ $('ss-fout').hidden = false; if (!st.plekken.length) $('pk-fout').hidden = false; fout = true; }}
     if (fout) {{ e.preventDefault(); e.stopImmediatePropagation(); (st.plekken.length ? $('ss-maten') : $('pk-figuren')).scrollIntoView({{ block: 'center' }}); return; }}
+    if (window.BordooControle && !window.BordooControle.akkoord(e, form, controleHtml)) return;
     try {{ localStorage.removeItem(OPSLAG); }} catch (x) {{}}
   }});
+
+  // ---------- controle-overzicht vóór versturen ----------
+  var nBeeld = 0;
+  function beeld(p, kid, pl, kant) {{
+    var hex = D.kleuren[kid].hex, n = ++nBeeld, f = FOTOS[p.id] && FOTOS[p.id][kid] && FOTOS[p.id][kid][kant];
+    var html, schaal, vb, xy;
+    if (f) {{ html = '<image href="' + f.src + '" x="0" y="0" width="' + f.w + '" height="' + f.h + '"/>'; schaal = 1 / f.cmpx; vb = f.uitsnede; xy = function (q) {{ return f.pos[q.id]; }}; }}
+    else {{ html = (kant === 'voor' ? p.voor : p.achter).replace(/rl-/g, 'rlc' + n + '-'); schaal = 1 / CM_PER_EENHEID; vb = [0, 0, 120, 120]; xy = function (q) {{ return [q.x, q.y]; }}; }}
+    (pl || []).forEach(function (x) {{
+      var q = p.posities.find(function (y) {{ return y.id === x.id; }}); if (!q || q.kant !== kant) return;
+      var c = xy(q); if (!c) return;
+      var w = x.cm * schaal;
+      if (st.logo) html += '<image href="' + st.logo + '" x="' + (c[0] - w / 2) + '" y="' + (c[1] - w / 2) + '" width="' + w + '" height="' + w + '" preserveAspectRatio="xMidYMid meet"/>';
+      else {{ var ink = licht(hex) ? '#5E1424' : '#FFFFFF', h = w * 0.5;
+        html += '<rect x="' + (c[0] - w / 2) + '" y="' + (c[1] - h / 2) + '" width="' + w + '" height="' + h + '" rx="' + (w * 0.06) + '" fill="none" stroke="' + ink + '" stroke-width="' + (w * 0.03) + '" stroke-dasharray="' + (w * 0.06) + ' ' + (w * 0.05) + '"/>' +
+          '<text x="' + c[0] + '" y="' + (c[1] + h * 0.13) + '" text-anchor="middle" font-family="Archivo, Arial, sans-serif" font-weight="800" font-size="' + (w * 0.17) + '" fill="' + ink + '">UW LOGO</text>'; }}
+    }});
+    return '<svg viewBox="' + vb.join(' ') + '" role="img" aria-label="' + esc(p.naam + ', ' + (kant === 'voor' ? 'voorkant' : 'achterkant')) + '" style="--stof:' + hex + ';--naad:' + naad(hex) + '">' + html + '</svg>';
+  }}
+  function controleHtml() {{
+    var C = window.BordooControle, regels = st.mand.concat(overzicht() ? [st.huidig] : []), stuks = 0;
+    var items = regels.map(function (r) {{
+      stuks += +r.totaal || 0;
+      var p = r.pid && D.producten.find(function (x) {{ return x.id === r.pid; }}), beelden = '';
+      if (p && D.kleuren[r.kid]) {{
+        var kanten = ['voor'];
+        if (p.achter && (r.pl || []).some(function (x) {{ var q = p.posities.find(function (y) {{ return y.id === x.id; }}); return q && q.kant === 'achter'; }})) kanten.push('achter');
+        beelden = kanten.map(function (k) {{ return '<figure>' + beeld(p, r.kid, r.pl, k) + '<figcaption>' + (k === 'voor' ? 'Voorkant' : 'Achterkant') + '</figcaption></figure>'; }}).join('');
+      }}
+      return C.product(beelden, r.product, C.rij('Kleur', r.kleur) + C.rij('Techniek', r.techniek) + C.rij('Logo', r.plekken || 'nog kiezen') +
+        C.rij('Maten', r.maten) + C.rij('Aantal', r.totaal + ' stuks'));
+    }});
+    return '<section class="controle__blok">' + C.kop(regels.length, stuks) + '<ol class="controle__producten">' + items.join('') + '</ol></section>' +
+      C.logoblok(form, st.logo) + C.gegevens(form);
+  }}
 
   var q = new URLSearchParams(location.search);
   var start = VAN[q.get('product')] || q.get('product') || 'polo';
