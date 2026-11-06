@@ -567,3 +567,47 @@ input[type="range"] { width: 100%; accent-color: var(--bordeaux); }
 .faq[open] summary { border-bottom: 1px solid var(--lijn); }
 .faq p { padding: 14px 18px 18px; color: var(--tekst); }
 .contactblok .meer { justify-self: start; }
+
+/* ---------- Controle-overzicht vóór versturen ---------- */
+.controle { width: min(780px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: var(--radius); box-shadow: 0 24px 60px rgba(0,0,0,.35); color: var(--zwart); background: var(--wit); }
+.controle[open] { display: flex; flex-direction: column; }
+.controle::backdrop { background: rgba(28,26,27,.6); }
+.controle__top { display: flex; justify-content: space-between; gap: 16px; padding: 22px 24px 14px; border-bottom: 1px solid var(--lijn); border-top: 4px solid var(--goud); }
+.controle__top h2 { font-size: 26px; margin: 4px 0 6px; }
+.controle__top .hint { margin: 0; }
+.controle__sluit { flex: none; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--lijn); background: var(--wit); font-size: 24px; line-height: 1; cursor: pointer; color: var(--zwart); }
+.controle__sluit:hover { border-color: var(--bordeaux); color: var(--bordeaux); }
+.controle__inhoud { overflow-y: auto; padding: 8px 24px 16px; display: grid; gap: 4px; }
+.controle__blok { padding: 14px 0; border-bottom: 1px solid var(--lijn); }
+.controle__blok:last-child { border-bottom: 0; }
+.controle__blok h3 { font-size: 18px; margin: 0 0 12px; }
+.controle__blok h3 span { font-family: var(--body); font-weight: 500; font-size: 15px; color: var(--tekst-zacht); margin-left: 6px; }
+.controle__producten { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 12px; }
+.controle__product { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center; background: var(--lichtgrijs); border-radius: var(--radius); padding: 12px; }
+.controle__beelden { display: flex; gap: 8px; }
+.controle__beelden figure { margin: 0; text-align: center; }
+.controle__beelden svg, .controle__beelden img { display: block; width: 112px; height: 112px; background: var(--wit); border-radius: 10px; }
+.controle__beelden figcaption { font-size: 12px; color: var(--tekst-zacht); margin-top: 4px; }
+.controle__geenbeeld { width: 112px; height: 112px; border-radius: 10px; background: var(--wit); display: grid; place-items: center; font-size: 32px; color: var(--tekst-zacht); }
+.controle__tekst strong { display: block; font-size: 17px; margin-bottom: 6px; }
+.controle__lijst { margin: 0; display: grid; gap: 4px; }
+.controle__lijst div { display: grid; grid-template-columns: 96px 1fr; gap: 10px; font-size: 15px; }
+.controle__lijst dt { color: var(--tekst-zacht); }
+.controle__lijst dd { margin: 0; font-weight: 500; }
+.controle__logos { display: flex; flex-wrap: wrap; gap: 12px; }
+.controle__logo { margin: 0; display: flex; gap: 12px; align-items: center; background: var(--lichtgrijs); border-radius: var(--radius); padding: 10px 14px 10px 10px; font-size: 14px; }
+.controle__logo img, .controle__bestand { width: 64px; height: 64px; object-fit: contain; background: var(--wit); border-radius: 8px; padding: 6px; display: grid; place-items: center; font-weight: 700; color: var(--bordeaux); }
+.controle__logo figcaption strong { display: block; font-size: 13px; color: var(--tekst-zacht); font-weight: 600; }
+.controle__bericht { margin: 0; white-space: pre-line; }
+.controle__knoppen { display: flex; justify-content: flex-end; gap: 12px; padding: 16px 24px; border-top: 1px solid var(--lijn); background: var(--lichtgrijs); }
+@media (max-width: 600px) {
+  .controle__top { padding: 18px 16px 12px; }
+  .controle__top h2 { font-size: 22px; }
+  .controle__inhoud { padding: 4px 16px 12px; }
+  .controle__product { align-items: start; gap: 12px; padding: 10px; }
+  .controle__beelden { flex-direction: column; }
+  .controle__beelden svg, .controle__beelden img, .controle__geenbeeld { width: 84px; height: 84px; }
+  .controle__lijst div { grid-template-columns: 72px 1fr; font-size: 14px; }
+  .controle__knoppen { padding: 12px 16px; flex-direction: column-reverse; }
+  .controle__knoppen .knop { width: 100%; justify-content: center; }
+}

@@ -176,6 +176,14 @@ def bodywarmer():
             DEFS + lichaam(V_ACHTER) + doorgestikt(ys, sil=V_ACHTER) + PLOOI_V + opstaande_kraag(True))
 
 
+def softshell_bodywarmer():
+    zakken = naad("M40 70 L43.5 84", 1.2) + naad("M80 70 L76.5 84", 1.2)
+    panelen = stiksel("M37 44 Q46 47 56.5 45") + stiksel("M83 44 Q74 47 63.5 45")
+    zoom = stiksel("M36 98.5 L84 98.5")
+    return (DEFS + lichaam(V) + PLOOI_V + panelen + zakken + zoom + rits(12, 102) + opstaande_kraag(),
+            DEFS + lichaam(V_ACHTER) + PLOOI_V + stiksel("M37 44 Q60 50 83 44") + zoom + opstaande_kraag(True))
+
+
 def hesje():
     band = lambda y: f'<path d="M35 {y} L85 {y} L85 {y + 4.6} L35 {y + 4.6} Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>'
     schouder = '<path d="M46.5 21 L49.6 19.6 L49.6 102 L46.5 102 Z M73.5 21 L70.4 19.6 L70.4 102 L73.5 102 Z" fill="url(#rl-refl)" stroke="rgba(0,0,0,.25)" stroke-width=".5"/>'
@@ -312,7 +320,7 @@ def overall_va():
 
 
 VOOR_ACHTER = {"werkbroek": werkbroek, "korte_werkbroek": korte_werkbroek_va, "overall": overall_va, "polo": polo, "tshirt": tshirt, "sweater": sweater, "hoodie": hoodie, "softshell": softshell, "fleece": fleece, "werkjas": werkjas,
-               "bodywarmer": bodywarmer, "hesje": hesje, "koksbuis": koksbuis, "overhemd": overhemd, "tuniek": tuniek, "schort": schort, "cap": cap, "tas": tas}
+               "bodywarmer": bodywarmer, "softshell_bodywarmer": softshell_bodywarmer, "hesje": hesje, "koksbuis": koksbuis, "overhemd": overhemd, "tuniek": tuniek, "schort": schort, "cap": cap, "tas": tas}
 ALLEEN = {"koksbroek": lambda: broek(ruit=True), "handdoek": handdoek}
 
 

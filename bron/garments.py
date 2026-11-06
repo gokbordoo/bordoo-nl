@@ -48,6 +48,8 @@ G["fleece"] = lambda: (p(LANG, BORDEAUX) + p("M50 20 L50 12 L70 12 L70 20 Q60 24
                        + l("M40 96 L80 96 M24 84 L30 86 M96 84 L90 86", "rgba(255,255,255,.3)") + logo(68, 38, WIT))
 G["bodywarmer"] = lambda: (p(VEST, DONKER) + p("M50 20 L50 12 L70 12 L70 20 Q60 26 50 20 Z", DONKER, "rgba(255,255,255,.3)") + _rits(18)
                            + "".join(l(f"M36 {y} L84 {y}", "rgba(255,255,255,.12)") for y in (52, 64, 76, 88)) + logo(68, 38, WIT))
+G["softshell_bodywarmer"] = lambda: (p(VEST, "#3B3E44") + p("M50 20 L50 11 L70 11 L70 20 Q60 25 50 20 Z", "#3B3E44", "rgba(255,255,255,.3)") + _rits(18)
+                                     + l("M40 70 L44 84 M80 70 L76 84", "rgba(255,255,255,.35)") + logo(68, 40, WIT))
 G["hesje"] = lambda: (p(VEST, GEEL) + l("M35 70 L85 70 M35 82 L85 82", GRIJS, 4.5) + l("M46 24 L46 100 M74 24 L74 100", GRIJS, 3.5)
                       + l("M60 30 L60 100", "rgba(0,0,0,.18)") + logo(64, 52, DONKER, .9))
 G["koksbuis"] = lambda: (p(LANG, WIT) + p("M50 20 L50 13 L70 13 L70 20 Q60 24 50 20 Z", WIT)
@@ -80,7 +82,7 @@ import itertools
 _TELLER = itertools.count(1)
 _KLEUR = {"oranje": "#F26A1B", "zwart": "#1F1E1F", "antraciet": "#3B3E44", "marine": "#1F2C44", "bordeaux": "#5E1424", "wit": "#FAFAF8", "fluogeel": "#E3EA3A", "zand": "#D8CBB5"}
 _STIJL = {"tshirt": ("zwart", 68, 41), "polo": ("bordeaux", 68, 41), "overhemd": ("wit", 69, 35), "hoodie": ("antraciet", 60, 50),
-          "werkjas": ("oranje", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40),
+          "werkjas": ("oranje", 70, 38), "softshell": ("antraciet", 68, 36), "fleece": ("bordeaux", 68, 38), "bodywarmer": ("zwart", 68, 40), "softshell_bodywarmer": ("antraciet", 68, 40),
           "hesje": ("fluogeel", 64, 54), "koksbuis": ("wit", 73, 37), "schort": ("zwart", 60, 33), "koksbroek": ("zwart", None, None),
           "werkbroek": ("antraciet", 44, 34), "korte_werkbroek": ("antraciet", 41, 58), "overall": ("marine", 60, 27), "tuniek": ("wit", 68, 36), "cap": ("bordeaux", 47, 57),
           "tas": ("zand", 60, 74), "handdoek": ("bordeaux", 60, 46)}

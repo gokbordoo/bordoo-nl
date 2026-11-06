@@ -30,6 +30,7 @@ P = {
     "hoodie": ("Sweaters & hoodies", "hoodie", "Warm voor tussendoor. Logo op de borst, groot op de rug.", "BD"),
     "tshirt": ("T-shirts", "tshirt", "Voordelig in grote aantallen, ideaal voor de zomer en evenementen.", "BD"),
     "bodywarmer": ("Bodywarmers", "bodywarmer", "Warm zonder mouwen, zodat u vrij kunt bewegen in de werkplaats.", "BD"),
+    "softshell_bodywarmer": ("Softshell bodywarmers", "softshell_bodywarmer", "Een softshell zonder mouwen: strak, licht en zakelijk, met uw armen vrij.", "BD"),
     "softshell": ("Softshell jassen", "softshell", "Licht, wind- en waterafstotend. Zakelijk genoeg voor bij de klant.", "BD"),
     "overall": ("Overalls", "overall", "Eén stuk dat alles beschermt. Logo op borst en rug.", "BD"),
     "fleece": ("Fleecevesten", "fleece", "Zacht en warm, met rits. Het logo wordt meestal geborduurd.", "B"),
@@ -50,15 +51,15 @@ B = [
     ("bouw", "Bouw", "Bouwkleding met uw logo", "Voor aannemers, installateurs en schilders. Stevige kleding die tegen een stootje kan.",
      "Aannemers en installateurs", "werkjas", ["werkjas", "hesje", "werkbroek", "korte_werkbroek", "hoodie", "tshirt"]),
     ("garage", "Garage & techniek", "Garage- en technische kleding met uw logo", "Voor autobedrijven, monteurs en de technische dienst. Praktisch in de werkplaats, netjes bij de klant.",
-     "Werkplaats en monteurs", "bodywarmer", ["bodywarmer", "softshell", "overall", "werkbroek", "korte_werkbroek", "polo"]),
+     "Werkplaats en monteurs", "bodywarmer", ["bodywarmer", "softshell", "softshell_bodywarmer", "overall", "werkbroek", "korte_werkbroek", "polo"]),
     ("schoonmaak", "Schoonmaak", "Schoonmaakkleding met uw logo", "Voor schoonmaak- en facilitaire bedrijven. Uw medewerkers zijn bij de klant meteen herkenbaar.",
      "Schoonmaak en facilitair", "fleece", ["polo", "fleece", "werkbroek", "softshell"]),
     ("zorg", "Zorg & beauty", "Zorg- en salonkleding met uw logo", "Voor thuiszorg, praktijken, kappers en schoonheidssalons. Fris, verzorgd en makkelijk te wassen.",
      "Zorg, kapper en salon", "tuniek", ["tuniek", "kapschort", "polo", "fleece"]),
     ("transport", "Transport", "Transport- en logistieke kleding met uw logo", "Voor chauffeurs, koeriers en magazijnen. Warm, zichtbaar en herkenbaar onderweg.",
-     "Chauffeurs en magazijn", "softshell", ["softshell", "bodywarmer", "hesje", "polo", "hoodie"]),
+     "Chauffeurs en magazijn", "softshell", ["softshell", "bodywarmer", "softshell_bodywarmer", "hesje", "polo", "hoodie"]),
     ("kantoor", "Kantoor & winkel", "Kantoor- en winkelkleding met uw logo", "Voor kantoor, winkel en showroom. Representatief, met een klein en strak logo.",
-     "Kantoor en winkel", "overhemd", ["overhemd", "polo", "trui", "bodywarmer"]),
+     "Kantoor en winkel", "overhemd", ["overhemd", "polo", "trui", "bodywarmer", "softshell_bodywarmer"]),
     ("sport", "Sport & clubs", "Clubkleding met uw logo", "Voor sportclubs, verenigingen en teams. Iedereen in dezelfde stijl, met naam of rugnummer.",
      "Clubs en verenigingen", "tshirt", ["sportshirt", "trainingsjas", "hoodie", "tas", "cap"]),
     ("particulier", "Particulier", "Persoonlijke kleding en cadeaus", "Een naam, tekst of afbeelding op kleding of handdoeken. Ook voor één stuk, bijvoorbeeld als cadeau.",
@@ -648,7 +649,7 @@ def branchepagina(k, menu, titel, intro, tegel, icon, prods):
 
 
 opties_branche = "".join(f'<option value="{b[0]}">{b[1]}</option>' for b in B)
-opties_product = "".join(f'<option value="{k}">{v[0]}</option>' for k, v in P.items())
+opties_product = "".join(f'<option value="{k}" data-beeld="{BESTANDEN_MAP}/{v[1]}.svg">{v[0]}</option>' for k, v in P.items())
 off = f"""<section class="hero hero--klein">
   <div class="wrap">
     <div class="hero__tekst">
@@ -722,6 +723,7 @@ off = f"""<section class="hero hero--klein">
     </aside>
   </div>
 </section>
+<script src="js/controle.js?v=1"></script>
 <script>
   (function () {{
     var q = new URLSearchParams(location.search);
@@ -737,7 +739,8 @@ off = f"""<section class="hero hero--klein">
       r.appendChild(weg); lijst.appendChild(r); r.querySelector('select').focus();
     }});
     // alle productregels samenvatten in het veld "aanvraag" (vóór de algemene verzendcode)
-    document.querySelector('form[name="offerte"]').addEventListener('submit', function () {{
+    var formulier = document.querySelector('form[name="offerte"]');
+    formulier.addEventListener('submit', function (e) {{
       var regels = [];
       lijst.querySelectorAll('.regel').forEach(function (r) {{
         var sel = r.querySelector('select'), a = r.querySelector('input[type=number]').value, m = r.querySelector('input[type=text]').value;
@@ -745,6 +748,7 @@ off = f"""<section class="hero hero--klein">
         regels.push((regels.length + 1) + '. ' + (sel.value ? sel.options[sel.selectedIndex].text : 'Product nog niet gekozen') + (a ? ' – ' + a + ' stuks' : '') + (m ? ' – maten: ' + m : ''));
       }});
       document.getElementById('o-aanvraag').value = regels.join('\\n');
+      if (window.BordooControle) window.BordooControle.akkoord(e, formulier, function () {{ return window.BordooControle.offerte(formulier); }});
     }});
   }})();
 </script>"""
@@ -807,6 +811,7 @@ files = {
 for b in B:
     files[f"branche-{b[0]}.html"] = (f"{b[2]} – Bordoo", b[3], branchepagina(*b), b[0])
 (OUT / BESTANDEN_MAP).mkdir(parents=True, exist_ok=True)
+(OUT / "js" / "controle.js").write_text((pathlib.Path(__file__).parent / "controle.js").read_text(encoding="utf-8"), encoding="utf-8")
 files.update({
     "over-bordoo.html": ("Over Bordoo – borduren en bedrukken van bedrijfskleding", "Bordoo borduurt en bedrukt bedrijfskleding met uw logo. Persoonlijk contact, eerlijk advies en eerst een voorbeeld.", VT.over(TEL, MAIL, CTA), None),
     "werkwijze.html": ("Werkwijze – Bordoo", "Zo werkt Bordoo: van aanvraag en voorstel tot productie en levering van uw kleding met logo.", VT.werkwijze(CTA), None),
