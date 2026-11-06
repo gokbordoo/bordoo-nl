@@ -44,6 +44,8 @@ PRODUCTEN = [
      + ln("M40 84 L80 84", 3, "#A9A3A4"), body(LANG) + ACHTER_KRAAG + ln("M40 84 L80 84", 3, "#A9A3A4"), ["fluooranje", "zwart", "antraciet", "marine", "rood", "kobalt"], JAS_POS, "kleding"),
     ("bodywarmer", "Bodywarmer", body(VEST) + KRAAG_RITS + ln("M60 18 L60 100") + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)),
      body(VEST) + ACHTER_KRAAG + "".join(ln(f"M36 {y} L84 {y}", .8) for y in (52, 64, 76, 88)), JAS, VEST_POS, "kleding"),
+    ("softshell_bodywarmer", "Softshell bodywarmer", body(VEST) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M40 70 L44 84 M80 70 L76 84"),
+     body(VEST) + ACHTER_KRAAG, JAS, VEST_POS, "kleding"),
     ("fleece", "Fleecevest", body(LANG) + KRAAG_RITS + ln("M60 18 L60 100") + ln("M40 96 L80 96"), body(LANG) + ACHTER_KRAAG + ln("M40 96 L80 96"),
      JAS + ["grijs"], JAS_POS, "kleding"),
     ("hesje", "Veiligheidshesje", body(VEST) + ln("M35 70 L85 70 M35 82 L85 82", 4.5, "#B9B6B4") + ln("M46 24 L46 100 M74 24 L74 100", 3.5, "#B9B6B4") + ln("M60 30 L60 100"),
@@ -76,7 +78,7 @@ KLEUREN = {
 
 # welk configuratorproduct hoort bij een product uit het branchemenu
 VAN_PRODUCT = {"werkbroek": "werkbroek", "korte_werkbroek": "korte_werkbroek", "overall": "overall", "koksbuis": "koksbuis", "schort": "schort", "polo": "polo", "cap": "cap", "werkjas": "werkjas", "hesje": "hesje", "hoodie": "hoodie",
-               "tshirt": "tshirt", "bodywarmer": "bodywarmer", "softshell": "softshell", "fleece": "fleece", "tuniek": "tuniek", "kapschort": "schort",
+               "tshirt": "tshirt", "bodywarmer": "bodywarmer", "softshell_bodywarmer": "softshell_bodywarmer", "softshell": "softshell", "fleece": "fleece", "tuniek": "tuniek", "kapschort": "schort",
                "overhemd": "overhemd", "trui": "sweater", "sportshirt": "tshirt", "trainingsjas": "fleece", "tas": "tas"}
 
 
@@ -119,7 +121,7 @@ _POS = {
                _p("mouw-rechts", "Mouw rechts", "voor", 30, 52, MOUW), _p("rug", "Rug", "achter", 60, 58, RUG)],
     "softshell": _JAS, "werkjas": [(_p("borst-links", "Borst links", "voor", 70, 39, BL) if p[0] == "borst-links" else
                                     _p("borst-rechts", "Borst rechts", "voor", 50, 39, BR) if p[0] == "borst-rechts" else p) for p in _JAS],
-    "fleece": _JAS, "bodywarmer": _VEST,
+    "fleece": _JAS, "bodywarmer": _VEST, "softshell_bodywarmer": _VEST,
     "hesje": [_p("borst-links", "Borst links", "voor", 65, 52, (6, 10, 8)), _p("borst-rechts", "Borst rechts", "voor", 55, 52, (6, 10, 8)),
               _p("rug", "Rug", "achter", 60, 50, (15, 25, 20))],
     "koksbuis": [_p("borst-links", "Borst links", "voor", 73, 37, (5, 10, 7)), _p("mouw-links", "Mouw links", "voor", 90, 52, MOUW),
